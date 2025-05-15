@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Or newer like ES2022
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "sourceMap": true, // Optional: for easier debugging
+    // "baseUrl": ".", // Optional: if you use path aliases
+    // "paths": { // Optional: example path aliases
+    //   "@/*": ["src/*"]
+    // }
+  },
+  "include": ["src/**/*"], // Files to include in compilation
+  "exclude": ["node_modules", "** / *.spec.ts"] // Files to exclude
+}
