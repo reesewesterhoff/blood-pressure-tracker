@@ -1,0 +1,19 @@
+{
+  "name": "blood-pressure-tracker",
+  "version": "1.0.0",
+  "description": "An app to track your blood pressure",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reesewesterhoff/blood-pressure-tracker.git"
+  },
+  "author": "reese.westerhoff@gmail.com",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/reesewesterhoff/blood-pressure-tracker/issues"
+  },
+  "homepage": "https://github.com/reesewesterhoff/blood-pressure-tracker#readme"
+}
