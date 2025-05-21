@@ -2,8 +2,10 @@
 
 import express, { Request, Response, NextFunction } from "express";
 import passport from "passport";
-import User from "../models/User"; // Import User model for registration
+import User from "../models/User";
 import { ensureAuth } from "../middleware/authMiddleware";
+import { validatePassword } from "../utils/validatePassword";
+import { validateEmail } from "../utils/validateEmail";
 
 const router = express.Router();
 
@@ -20,6 +22,21 @@ router.post(
       return res
         .status(400)
         .json({ message: "Please provide email, password, and display name." });
+    }
+
+    // validate email
+    const { isValidEmail, message } = validateEmail(email);
+    if (!isValidEmail) {
+      return res.status(400).json({ message });
+    }
+
+    // validate password
+    const { isValidPassword, errors } = validatePassword(password);
+    if (!isValidPassword) {
+      return res.status(400).json({
+        message: "Password validation failed.",
+        errors,
+      });
     }
 
     try {

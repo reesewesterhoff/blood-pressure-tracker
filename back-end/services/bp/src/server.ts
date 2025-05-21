@@ -68,7 +68,7 @@ serverApp.get("/", (req, res) => {
   res.send("Blood Pressure Tracker API Running (with Local Auth)");
 });
 
-const SERVER_PORT = process.env.PORT || 5000;
+const SERVER_PORT = process.env.PORT || 3000;
 
 serverApp.listen(SERVER_PORT, () =>
   console.log(
