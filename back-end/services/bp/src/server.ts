@@ -1,81 +1,79 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
-import session from "express-session"; // For session management with Passport
-import MongoStore from "connect-mongo"; // To store session in MongoDB
-import passport from "passport"; // For authentication
+// Description: Main Express server setup.
 
-import connectDB from "./config/db";
-import { configurePassport } from "./config/passport-setup"; // Your Passport config
+import expressApp from "express";
+import dotenvConfig from "dotenv";
+import corsMiddleware from "cors";
+import expressSession from "express-session";
+import connectMongoSession from "connect-mongo";
+import passportMain from "passport";
 
-import bloodPressureRoutes from "./routes/bloodPressureRoutes";
-import authRoutes from "./routes/authRoutes";
+import connectDBInstance from "./config/db";
+import { configurePassport as configurePassportInstance } from "./config/passport-setup";
+
+import bloodPressureRoutesInstance from "./routes/bloodPressureRoutes";
+import authRoutesInstance from "./routes/authRoutes";
 
 // Load environment variables
-dotenv.config();
+dotenvConfig.config();
 
 // Initialize Express app
-const app = express();
+const serverApp = expressApp();
 
 // Connect to MongoDB
-connectDB();
+connectDBInstance();
 
 // Passport configuration
-configurePassport(); // Call the function to set up Passport strategies
+configurePassportInstance();
 
 // Middleware
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:8080", // Allow frontend to connect
-    credentials: true, // Important for cookies/sessions
+serverApp.use(
+  corsMiddleware({
+    origin: process.env.FRONTEND_URL || "http://localhost:8080",
+    credentials: true,
   })
 );
-app.use(express.json()); // Body parser for JSON
-app.use(express.urlencoded({ extended: false })); // Body parser for URL-encoded data
+serverApp.use(expressApp.json());
+serverApp.use(expressApp.urlencoded({ extended: false }));
 
-// Express session middleware
-// Make sure MONGO_URI is defined in your .env file
-const mongoUri = process.env.MONGO_URI;
-if (!mongoUri) {
+const mongoSessionUri = process.env.MONGO_URI;
+if (!mongoSessionUri) {
   console.error(
     "MONGO_URI not defined in .env file. Session storage will not work."
   );
   process.exit(1);
 }
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "supersecretkey", // Change this to a strong secret
+serverApp.use(
+  expressSession({
+    secret: process.env.SESSION_SECRET || "supersecretkeyfortestingonly",
     resave: false,
-    saveUninitialized: false, // Don't create session until something stored
-    store: MongoStore.create({ mongoUrl: mongoUri }),
+    saveUninitialized: false,
+    store: connectMongoSession.create({ mongoUrl: mongoSessionUri }),
     cookie: {
-      // secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-      // httpOnly: true, // Prevent client-side JS from accessing the cookie
-      // maxAge: 1000 * 60 * 60 * 24 // 1 day
+      secure: process.env.NODE_ENV === "production", // true in production
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     },
   })
 );
 
-// Passport middleware (Initialize Passport and restore authentication state, if any, from the session)
-app.use(passport.initialize());
-app.use(passport.session());
+serverApp.use(passportMain.initialize());
+serverApp.use(passportMain.session());
 
 // Define Routes
-app.use("/api/readings", bloodPressureRoutes);
-app.use("/auth", authRoutes); // Authentication routes
+serverApp.use("/api/readings", bloodPressureRoutesInstance);
+serverApp.use("/auth", authRoutesInstance);
 
-// Basic route for testing
-app.get("/", (req, res) => {
-  res.send("Blood Pressure Tracker API Running");
+serverApp.get("/", (req, res) => {
+  res.send("Blood Pressure Tracker API Running (with Local Auth)");
 });
 
-const PORT = process.env.PORT || 5000;
+const SERVER_PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () =>
+serverApp.listen(SERVER_PORT, () =>
   console.log(
     `Server running in ${
       process.env.NODE_ENV || "development"
-    } mode on port ${PORT}`
+    } mode on port ${SERVER_PORT}`
   )
 );

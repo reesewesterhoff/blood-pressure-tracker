@@ -1,6 +1,6 @@
 // Description: Mongoose schema for Blood Pressure Readings.
 
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema as MongooseSchema } from "mongoose";
 
 export interface IBloodPressureReading extends Document {
   user: mongoose.Schema.Types.ObjectId; // Reference to the User model
@@ -10,7 +10,7 @@ export interface IBloodPressureReading extends Document {
   isHealthy?: boolean; // Optional: calculated field or set based on thresholds
 }
 
-const BloodPressureReadingSchema: Schema = new Schema({
+const BloodPressureReadingSchema: MongooseSchema = new MongooseSchema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User", // Reference to the User collection

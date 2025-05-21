@@ -1,18 +1,20 @@
 // Description: Controllers for blood pressure reading operations.
 
-import { Request, Response } from "express";
-import BloodPressureReading, {
-  IBloodPressureReading,
-} from "../models/BloodPressureReading";
-import mongoose from "mongoose";
+import {
+  Request as ExpressRequest,
+  Response as ExpressResponse,
+} from "express";
+import BloodPressureReadingModel from "../models/BloodPressureReading";
+// import mongoose from 'mongoose'; // Already imported in User.ts and BloodPressureReading.ts
 
 // @desc    Add a new blood pressure reading
 // @route   POST /api/readings
 // @access  Private
-export const addReading = async (req: Request, res: Response) => {
+export const addReading = async (req: ExpressRequest, res: ExpressResponse) => {
   try {
     const { systolic, diastolic } = req.body;
-    const userId = (req.user as any)?.id; // Assuming req.user is populated by auth middleware
+    // Access user ID from req.user (populated by Passport)
+    const userId = (req.user as any)?.id || (req.user as any)?._id;
 
     if (!userId) {
       return res
@@ -25,8 +27,13 @@ export const addReading = async (req: Request, res: Response) => {
         .status(400)
         .json({ message: "Systolic and diastolic values are required" });
     }
+    if (typeof systolic !== "number" || typeof diastolic !== "number") {
+      return res
+        .status(400)
+        .json({ message: "Systolic and diastolic must be numbers." });
+    }
 
-    const newReading = new BloodPressureReading({
+    const newReading = new BloodPressureReadingModel({
       user: userId,
       systolic,
       diastolic,
@@ -35,7 +42,7 @@ export const addReading = async (req: Request, res: Response) => {
     const reading = await newReading.save();
     res.status(201).json(reading);
   } catch (err: any) {
-    console.error(err.message);
+    console.error("Error in addReading:", err.message);
     res.status(500).send("Server Error");
   }
 };
@@ -43,20 +50,23 @@ export const addReading = async (req: Request, res: Response) => {
 // @desc    Get all blood pressure readings for the logged-in user
 // @route   GET /api/readings
 // @access  Private
-export const getReadings = async (req: Request, res: Response) => {
+export const getReadings = async (
+  req: ExpressRequest,
+  res: ExpressResponse
+) => {
   try {
-    const userId = (req.user as any)?.id;
+    const userId = (req.user as any)?.id || (req.user as any)?._id;
     if (!userId) {
       return res
         .status(401)
         .json({ message: "User not authenticated for fetching readings." });
     }
-    const readings = await BloodPressureReading.find({ user: userId }).sort({
-      recordedAt: -1,
-    });
+    const readings = await BloodPressureReadingModel.find({
+      user: userId,
+    }).sort({ recordedAt: -1 });
     res.json(readings);
   } catch (err: any) {
-    console.error(err.message);
+    console.error("Error in getReadings:", err.message);
     res.status(500).send("Server Error");
   }
 };
@@ -64,16 +74,19 @@ export const getReadings = async (req: Request, res: Response) => {
 // @desc    Get average blood pressure for the logged-in user
 // @route   GET /api/readings/average
 // @access  Private
-export const getAverageBloodPressure = async (req: Request, res: Response) => {
+export const getAverageBloodPressure = async (
+  req: ExpressRequest,
+  res: ExpressResponse
+) => {
   try {
-    const userId = (req.user as any)?.id;
+    const userId = (req.user as any)?.id || (req.user as any)?._id;
     if (!userId) {
       return res
         .status(401)
         .json({ message: "User not authenticated for calculating average." });
     }
 
-    const readings = await BloodPressureReading.find({ user: userId });
+    const readings = await BloodPressureReadingModel.find({ user: userId });
 
     if (readings.length === 0) {
       return res.json({ averageSystolic: 0, averageDiastolic: 0, count: 0 });
@@ -96,7 +109,7 @@ export const getAverageBloodPressure = async (req: Request, res: Response) => {
       count: readings.length,
     });
   } catch (err: any) {
-    console.error(err.message);
+    console.error("Error in getAverageBloodPressure:", err.message);
     res.status(500).send("Server Error");
   }
 };
