@@ -1,0 +1,10 @@
+AI Reasoning:
+- Ask clarifying questions when multiple implementation paths are available and the best choice isn't obvious
+- Present trade-offs between different approaches with their pros and cons
+- Confirm understanding of requirements before implementing complex features
+- Suggest alternatives when a requested approach might lead to performance or security issues
+- Request context about existing patterns in the codebase when implementing new features
+- Prioritize consistency with existing codebase patterns
+- Consider scalability implications for database schema design
+- Balance between performance optimization and code maintainability
+- Evaluate security implications of implementation choices

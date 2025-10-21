@@ -1,0 +1,13 @@
+---
+description: Enforce TypeScript coding standards and best practices
+globs: ["src/**/*.ts", "src/**/*.tsx"]
+alwaysApply: false
+---
+
+TypeScript Code Style:
+- Use TypeScript for all code; prefer types over interfaces except for public APIs
+- Create precise types that reflect your data models
+- Avoid using 'any' or 'unknown' types; look for type definitions in the codebase
+- Avoid type assertions with 'as' or '!' operators unless absolutely necessary
+- Use mapped and conditional types for advanced type transformations
+- Export types from a central location for reuse

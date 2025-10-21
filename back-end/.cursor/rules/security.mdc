@@ -1,0 +1,14 @@
+---
+description: Security best practices for authentication and data protection
+globs: ["src/routes/**/*.ts", "src/middleware/**/*.ts", "src/controllers/**/*.ts", "src/config/**/*.ts"]
+alwaysApply: false
+---
+
+Security Best Practices:
+- Implement proper authentication and authorization
+- Sanitize user inputs to prevent injection attacks
+- Use environment variables for sensitive configuration
+- Implement rate limiting to prevent abuse
+- Follow the principle of least privilege for API access
+- Use HTTPS for all communications
+- Validate and sanitize all inputs, especially from external sources

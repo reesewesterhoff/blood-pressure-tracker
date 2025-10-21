@@ -1,0 +1,13 @@
+---
+description: Performance optimization strategies for database and API operations
+globs: ["src/controllers/**/*.ts", "src/models/**/*.ts", "src/routes/**/*.ts"]
+alwaysApply: false
+---
+
+Performance Optimization:
+- Optimize database queries with proper indexing
+- Implement caching strategies for frequently accessed data
+- Use lazy loading and pagination for large datasets
+- Optimize image and asset delivery
+- Use server-side rendering or static generation when appropriate
+- Monitor and optimize API response times

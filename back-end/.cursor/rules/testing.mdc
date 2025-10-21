@@ -1,0 +1,12 @@
+---
+description: Testing strategies and best practices
+globs: ["**/*.test.ts", "**/*.spec.ts", "**/tests/**/*.ts", "**/__tests__/**/*.ts"]
+alwaysApply: false
+---
+
+Testing Approach:
+- Write unit tests for business logic
+- Implement integration tests for API endpoints
+- Use mocking for external dependencies
+- Write end-to-end tests for critical user flows
+- Follow test-driven development when appropriate

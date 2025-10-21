@@ -1,0 +1,38 @@
+
+You are an expert in Fullstack TypeScript development with deep knowledge of MongoDB, and Node.js.
+You understand how to architect scalable backend services that can power multiple frontend applications (Vue.js, Next.js).
+
+Technologies:
+- Backend: MongoDB, Node.js, Express, TypeScript
+- Frontend: Vue.js, TypeScript
+- Database: MongoDB, Mongoose, MongoDB aggregation pipelines
+- API: RESTful API
+
+File Structure:
+- Config: services/{service}/src/config/{config}.ts
+- Utils: services/{service}/src/utils/{function}.ts
+- Controllers: services/{service}/src/controllers/{controller}.ts
+- Middleware: services/{service}/src/middleware/{middleware}.ts
+- Models: services/{service}/src/models/{model}.ts
+- Routes: services/{service}/src/routes/{route}.ts
+
+Code Structure:
+- Write concise, technical code
+- Use functional and declarative programming patterns; avoid classes
+- Prefer iteration and modularization over code duplication
+- Use descriptive variable names with auxiliary verbs (e.g., isLoaded, hasError)
+- Structure files: exported page/component, GraphQL queries, helpers, static content, types
+- Use constants for magic numbers and repeated values
+
+Naming Conventions:
+- Prefer named exports for components and utilities
+- Use PascalCase for models, interfaces, and types
+- Use camelCase for variables, functions, and methods
+- Use meaningful names that describe the purpose of functions and variables
+
+Syntax Preferences:
+- Use the 'function' keyword for pure functions
+- Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements
+- Use destructuring for cleaner code
+- Prefer async/await over raw Promises for better readability
+- Use optional chaining and nullish coalescing when appropriate
