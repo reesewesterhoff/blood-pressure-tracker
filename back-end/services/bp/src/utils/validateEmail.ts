@@ -13,13 +13,29 @@ interface EmailValidationResult {
  * @returns An EmailValidationResult object.
  */
 export function validateEmail(email: string): EmailValidationResult {
-  // Regular expression for basic email validation
-  // This regex is a common one, but email validation can be complex.
-  // It checks for a general pattern: chars@chars.chars
-  // For more robust validation, consider using a well-tested library.
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // Handle null/undefined - throw error for these
+  if (email === null || email === undefined) {
+    throw new Error("Email must be a non-empty string");
+  }
 
-  if (emailRegex.test(email)) {
+  // Handle empty string and non-string types - return invalid
+  if (!email || typeof email !== "string") {
+    return { isValidEmail: false, message: "Invalid email address format." };
+  }
+
+  // Regular expression for email validation
+  // Rejects consecutive dots, leading/trailing dots, and ensures proper structure
+  const emailRegex = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  // Additional checks for consecutive dots and leading/trailing dots in local part
+  const hasConsecutiveDots = /\.\./.test(email);
+  const hasLeadingTrailingDots = /^\.|\.$|@\.|\.\@/.test(email);
+
+  if (
+    emailRegex.test(email) &&
+    !hasConsecutiveDots &&
+    !hasLeadingTrailingDots
+  ) {
     return { isValidEmail: true };
   } else {
     return { isValidEmail: false, message: "Invalid email address format." };

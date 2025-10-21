@@ -1,5 +1,3 @@
-// Description: Main Express server setup.
-
 import expressApp from "express";
 import dotenvConfig from "dotenv";
 import corsMiddleware from "cors";
@@ -7,33 +5,47 @@ import expressSession from "express-session";
 import connectMongoSession from "connect-mongo";
 import passportMain from "passport";
 
-import connectDBInstance from "./config/db";
-import { configurePassport as configurePassportInstance } from "./config/passport-setup";
+import { connectDB, configurePassport, loadEnvironmentConfig } from "./config";
+import {
+  errorHandler,
+  notFoundHandler,
+  generalRateLimit,
+  authRateLimit,
+  sanitizeApiInput,
+} from "./middleware";
 
-import bloodPressureRoutesInstance from "./routes/bloodPressureRoutes";
-import authRoutesInstance from "./routes/authRoutes";
+import { bloodPressureRoutes, authRoutes } from "./routes";
 
 // Load environment variables
 dotenvConfig.config();
+
+// Validate environment configuration
+const envConfig = loadEnvironmentConfig();
 
 // Initialize Express app
 const serverApp = expressApp();
 
 // Connect to MongoDB
-connectDBInstance();
+connectDB();
 
 // Passport configuration
-configurePassportInstance();
+configurePassport();
 
-// Middleware
+// Security middleware
+serverApp.use(generalRateLimit);
+serverApp.use(sanitizeApiInput);
+
+// CORS middleware
 serverApp.use(
   corsMiddleware({
     origin: process.env.FRONTEND_URL || "http://localhost:8080",
     credentials: true,
   })
 );
-serverApp.use(expressApp.json());
-serverApp.use(expressApp.urlencoded({ extended: false }));
+
+// Body parsing middleware
+serverApp.use(expressApp.json({ limit: "10mb" }));
+serverApp.use(expressApp.urlencoded({ extended: false, limit: "10mb" }));
 
 const mongoSessionUri = process.env.MONGO_URI;
 if (!mongoSessionUri) {
@@ -60,20 +72,27 @@ serverApp.use(
 serverApp.use(passportMain.initialize());
 serverApp.use(passportMain.session());
 
-// Define Routes
-serverApp.use("/api/readings", bloodPressureRoutesInstance);
-serverApp.use("/auth", authRoutesInstance);
+// Define Routes with rate limiting
+serverApp.use("/auth", authRateLimit, authRoutes);
+serverApp.use("/api/readings", bloodPressureRoutes);
 
 serverApp.get("/", (req, res) => {
-  res.send("Blood Pressure Tracker API Running (with Local Auth)");
+  res.json({
+    success: true,
+    message: "Blood Pressure Tracker API Running",
+    version: "1.0.0",
+    environment: envConfig.NODE_ENV,
+  });
 });
 
-const SERVER_PORT = process.env.PORT || 3000;
+// 404 handler
+serverApp.use(notFoundHandler);
 
-serverApp.listen(SERVER_PORT, () =>
+// Error handling middleware (must be last)
+serverApp.use(errorHandler);
+
+serverApp.listen(envConfig.PORT, () =>
   console.log(
-    `Server running in ${
-      process.env.NODE_ENV || "development"
-    } mode on port ${SERVER_PORT}`
+    `Server running in ${envConfig.NODE_ENV} mode on port ${envConfig.PORT}`
   )
 );

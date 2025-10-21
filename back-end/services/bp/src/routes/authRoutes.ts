@@ -2,49 +2,55 @@
 
 import express, { Request, Response, NextFunction } from "express";
 import passport from "passport";
-import User from "../models/User";
-import { ensureAuth } from "../middleware/authMiddleware";
-import { validatePassword } from "../utils/validatePassword";
-import { validateEmail } from "../utils/validateEmail";
+import mongoose from "mongoose";
+import { User } from "../models/User";
+import { ensureAuth } from "../middleware";
+import { validatePassword, validateEmail } from "../utils";
+import { ApiResponse } from "../types";
 
-const router = express.Router();
+const authRoutes = express.Router();
 
 // --- Local Authentication Routes ---
 
 // @desc    Register new user with email and password
 // @route   POST /auth/register
-router.post(
+authRoutes.post(
   "/register",
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response<ApiResponse>) => {
     const { email, password, displayName, firstName, lastName } = req.body;
 
     if (!email || !password || !displayName) {
-      return res
-        .status(400)
-        .json({ message: "Please provide email, password, and display name." });
+      return res.status(400).json({
+        success: false,
+        message: "Please provide email, password, and display name.",
+      });
     }
 
     // validate email
     const { isValidEmail, message } = validateEmail(email);
     if (!isValidEmail) {
-      return res.status(400).json({ message });
+      return res.status(400).json({ success: false, message });
     }
 
     // validate password
     const { isValidPassword, errors } = validatePassword(password);
     if (!isValidPassword) {
       return res.status(400).json({
+        success: false,
         message: "Password validation failed.",
         errors,
       });
     }
 
     try {
-      const existingUser = await User.findOne({ email: email.toLowerCase() });
+      const existingUser = await User.findOne({
+        email: email.toLowerCase(),
+      });
       if (existingUser) {
-        return res
-          .status(400)
-          .json({ message: "User with this email already exists." });
+        return res.status(400).json({
+          success: false,
+          message: "User with this email already exists.",
+        });
       }
 
       const newUser = new User({
@@ -62,6 +68,7 @@ router.post(
         if (err) {
           console.error("Error logging in after registration:", err);
           return res.status(500).json({
+            success: false,
             message:
               "Registration successful, but failed to log in automatically.",
           });
@@ -70,69 +77,85 @@ router.post(
         const userResponse = { ...newUser.toObject() };
         delete userResponse.password;
         return res.status(201).json({
+          success: true,
           message: "User registered and logged in successfully",
-          user: userResponse,
+          data: userResponse,
         });
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error("Registration error:", error);
-      if (error.name === "ValidationError") {
-        return res
-          .status(400)
-          .json({ message: "Validation Error", errors: error.errors });
+      if (error instanceof mongoose.Error.ValidationError) {
+        const validationErrors = Object.values(error.errors).map(
+          (err) => err.message
+        );
+        return res.status(400).json({
+          success: false,
+          message: "Validation Error",
+          errors: validationErrors,
+        });
       }
-      res.status(500).json({ message: "Server error during registration." });
+      res
+        .status(500)
+        .json({ success: false, message: "Server error during registration." });
     }
   }
 );
 
 // @desc    Login user with email and password
 // @route   POST /auth/login
-router.post("/login", (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate(
-    "local",
-    (
-      err: any,
-      user: Express.User | false | null,
-      info: { message: string } | undefined
-    ) => {
-      if (err) {
-        console.error("Local login error:", err);
-        return next(err);
-      }
-      if (!user) {
-        return res.status(401).json({
-          message: info?.message || "Login failed. Invalid credentials.",
+authRoutes.post(
+  "/login",
+  (req: Request, res: Response<ApiResponse>, next: NextFunction) => {
+    passport.authenticate(
+      "local",
+      (
+        err: Error | null,
+        user: Express.User | false | null,
+        info: { message: string } | undefined
+      ) => {
+        if (err) {
+          console.error("Local login error:", err);
+          return next(err);
+        }
+        if (!user) {
+          return res.status(401).json({
+            success: false,
+            message: info?.message || "Login failed. Invalid credentials.",
+          });
+        }
+        req.logIn(user, (err) => {
+          if (err) {
+            console.error("Error during req.logIn:", err);
+            return res
+              .status(500)
+              .json({ success: false, message: "Error logging in." });
+          }
+          // Send back user object without password
+          const userResponse = { ...(user as any).toObject() };
+          delete userResponse.password;
+          return res.status(200).json({
+            success: true,
+            message: "Logged in successfully",
+            data: userResponse,
+          });
         });
       }
-      req.logIn(user, (err) => {
-        if (err) {
-          console.error("Error during req.logIn:", err);
-          return res.status(500).json({ message: "Error logging in." });
-        }
-        // Send back user object without password
-        const userResponse = { ...(user as any).toObject() };
-        delete userResponse.password;
-        return res
-          .status(200)
-          .json({ message: "Logged in successfully", user: userResponse });
-      });
-    }
-  )(req, res, next);
-});
+    )(req, res, next);
+  }
+);
 
 // --- Google OAuth Routes ---
 
 // @desc    Auth with Google
 // @route   GET /auth/google
-router.get(
+authRoutes.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 // @desc    Google auth callback
 // @route   GET /auth/google/callback
-router.get(
+authRoutes.get(
   "/google/callback",
   passport.authenticate("google", {
     // successRedirect: process.env.FRONTEND_URL || 'http://localhost:8080/dashboard', // We handle redirect manually
@@ -151,7 +174,7 @@ router.get(
 
 // @desc    Logout user
 // @route   GET /auth/logout
-router.get("/logout", (req, res, next) => {
+authRoutes.get("/logout", (req, res) => {
   req.logout((err) => {
     if (err) {
       console.error("Logout error:", err);
@@ -173,7 +196,7 @@ router.get("/logout", (req, res, next) => {
 
 // @desc    Get current logged-in user
 // @route   GET /auth/user
-router.get("/user", ensureAuth, (req, res) => {
+authRoutes.get("/user", ensureAuth, (req, res) => {
   // req.user is populated by Passport. Ensure password is not sent.
   if (req.user) {
     const userResponse = { ...(req.user as any).toObject() };
@@ -184,4 +207,4 @@ router.get("/user", ensureAuth, (req, res) => {
   }
 });
 
-export default router;
+export { authRoutes };

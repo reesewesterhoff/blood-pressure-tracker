@@ -3,7 +3,8 @@
 import passportInstance from "passport";
 import { Strategy as GoogleStrategyPassport } from "passport-google-oauth20";
 import { Strategy as LocalStrategyPassport } from "passport-local"; // For email/password
-import UserModel, { IUser as IUserModel } from "../models/User";
+import { User } from "../models/User";
+import { IUser } from "../types";
 
 export function configurePassport() {
   // Local Strategy (email/password)
@@ -13,7 +14,7 @@ export function configurePassport() {
       async (email, password, done) => {
         try {
           const lowercasedEmail = email.toLowerCase();
-          const user = await UserModel.findOne({ email: lowercasedEmail });
+          const user = await User.findOne({ email: lowercasedEmail });
           if (!user) {
             return done(null, false, {
               message: "Incorrect email or password.",
@@ -72,7 +73,7 @@ export function configurePassport() {
         };
 
         try {
-          let user = await UserModel.findOne({ googleId: profile.id });
+          let user = await User.findOne({ googleId: profile.id });
           if (user) {
             // User found with this Google ID
             // Optionally update user details from Google profile if they changed
@@ -85,7 +86,7 @@ export function configurePassport() {
 
           // No user with this Google ID, check if email from Google already exists (local account)
           if (googleEmail) {
-            user = await UserModel.findOne({ email: googleEmail });
+            user = await User.findOne({ email: googleEmail });
             if (user) {
               // Email exists (likely local account or different Google account linked previously)
               // Link Google ID to this existing account
@@ -101,7 +102,7 @@ export function configurePassport() {
           }
 
           // If no existing user by googleId or email, create a new one
-          user = await UserModel.create(newUser);
+          user = await User.create(newUser);
           return done(null, user);
         } catch (err: any) {
           console.error("Error in GoogleStrategy:", err);
@@ -120,14 +121,14 @@ export function configurePassport() {
   );
 
   passportInstance.serializeUser((user: any, done) => {
-    // user can be IUserModel
+    // user can be IUser
     done(null, user.id);
   });
 
   passportInstance.deserializeUser(async (id: string, done) => {
     try {
-      const user = await UserModel.findById(id);
-      done(null, user as IUserModel | null); // Cast user to IUserModel or null
+      const user = await User.findById(id);
+      done(null, user as IUser | null); // Cast user to IUser or null
     } catch (err) {
       done(err, null);
     }

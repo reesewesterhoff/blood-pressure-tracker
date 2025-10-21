@@ -1,19 +1,8 @@
 // Description: Mongoose schema for User (supports Google OAuth and Local email/password).
 
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs"; // For password hashing
-
-export interface IUser extends Document {
-  googleId?: string; // Optional for local users
-  displayName: string;
-  firstName?: string; // Optional, might not be available for local registration initially
-  lastName?: string; // Optional
-  email?: string; // Used as username for local auth, can also be from Google
-  password?: string; // For local authentication
-  image?: string;
-  createdAt: Date;
-  comparePassword(candidatePassword: string): Promise<boolean>;
-}
+import { IUser } from "../types";
 
 const UserSchema: Schema = new Schema({
   googleId: {
@@ -81,4 +70,4 @@ UserSchema.methods.comparePassword = function (
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-export default mongoose.model<IUser>("User", UserSchema);
+export const User = mongoose.model<IUser>("User", UserSchema);
