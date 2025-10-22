@@ -33,8 +33,7 @@ export function errorHandler(
   req: Request,
   res: Response<ApiResponse>
 ) {
-  let error = { ...err };
-  error.message = err.message;
+  let error: AppError = err;
 
   // Log error for debugging
   console.error("Error:", {
