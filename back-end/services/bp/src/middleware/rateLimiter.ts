@@ -91,18 +91,19 @@ export function createRateLimiter(options: RateLimitOptions) {
 // Pre-configured rate limiters
 export const authRateLimit = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts per window
+  max: 5, // 5 failed attempts per window
   message: "Too many authentication attempts, please try again later",
+  skipSuccessfulRequests: true, // Only count failed login attempts
 });
 
 export const generalRateLimit = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requests per window
+  max: 1000, // 1000 requests per window (~67/minute)
   message: "Too many requests, please try again later",
 });
 
 export const strictRateLimit = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
-  max: 10, // 10 requests per minute
+  max: 100, // 100 requests per minute (for high-risk endpoints)
   message: "Rate limit exceeded, please slow down",
 });
