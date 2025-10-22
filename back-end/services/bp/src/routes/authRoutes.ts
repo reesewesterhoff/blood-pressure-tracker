@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import { User } from "../models/User";
 import { ensureAuth } from "../middleware";
 import { validatePassword, validateEmail } from "../utils";
-import { ApiResponse } from "../types";
+import { ApiResponse, IUser } from "../types";
 
 const authRoutes = express.Router();
 
@@ -74,7 +74,7 @@ authRoutes.post(
           });
         }
         // Send back user object without password
-        const userResponse = { ...newUser.toObject() };
+        const userResponse = newUser.toObject();
         delete userResponse.password;
         return res.status(201).json({
           success: true,
@@ -131,7 +131,7 @@ authRoutes.post(
               .json({ success: false, message: "Error logging in." });
           }
           // Send back user object without password
-          const userResponse = { ...(user as any).toObject() };
+          const userResponse = (user as IUser).toObject();
           delete userResponse.password;
           return res.status(200).json({
             success: true,
@@ -199,7 +199,7 @@ authRoutes.get("/logout", (req, res) => {
 authRoutes.get("/user", ensureAuth, (req, res) => {
   // req.user is populated by Passport. Ensure password is not sent.
   if (req.user) {
-    const userResponse = { ...(req.user as any).toObject() };
+    const userResponse = (req.user as IUser).toObject();
     delete userResponse.password; // Ensure password is not sent
     res.json(userResponse);
   } else {
