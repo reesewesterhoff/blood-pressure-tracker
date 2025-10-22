@@ -60,7 +60,7 @@ function sanitizeInput(input: any, options: SanitizeOptions = {}): any {
 }
 
 export function createInputSanitizer(options: SanitizeOptions = {}) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, _res: Response, next: NextFunction) => {
     // Sanitize body
     if (req.body) {
       req.body = sanitizeInput(req.body, options);
@@ -91,42 +91,3 @@ export const sanitizeApiInput = createInputSanitizer({
   stripHtml: true,
   trimWhitespace: true,
 });
-
-// Validation helpers
-export function validateAndSanitizeEmail(email: string): {
-  isValid: boolean;
-  sanitized?: string;
-  error?: string;
-} {
-  const sanitized = validator.normalizeEmail(email);
-
-  if (!sanitized || !validator.isEmail(sanitized)) {
-    return { isValid: false, error: "Invalid email format" };
-  }
-
-  return { isValid: true, sanitized };
-}
-
-export function validateAndSanitizePassword(password: string): {
-  isValid: boolean;
-  sanitized?: string;
-  error?: string;
-} {
-  // Don't normalize passwords, just validate length and complexity
-  if (!password || password.length < 8) {
-    return {
-      isValid: false,
-      error: "Password must be at least 8 characters long",
-    };
-  }
-
-  // Check for common weak patterns
-  if (
-    password.toLowerCase().includes("password") ||
-    password.includes("123456")
-  ) {
-    return { isValid: false, error: "Password is too weak" };
-  }
-
-  return { isValid: true, sanitized: password };
-}

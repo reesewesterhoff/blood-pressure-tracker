@@ -10,8 +10,6 @@ export { CustomError, errorHandler, notFoundHandler } from "./errorHandler";
 export {
   sanitizeUserInput,
   sanitizeApiInput,
-  validateAndSanitizeEmail,
-  validateAndSanitizePassword,
   createInputSanitizer,
 } from "./inputSanitizer";
 
