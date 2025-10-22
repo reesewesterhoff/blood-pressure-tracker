@@ -6,3 +6,5 @@ export { validateEmail } from "./validateEmail";
 // Password validation utilities
 export { validatePassword } from "./validatePassword";
 
+// Query parameter parsing utilities
+export { parseQueryInt } from "./parseQueryParams";

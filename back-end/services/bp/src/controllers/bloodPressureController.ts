@@ -1,16 +1,25 @@
 // Description: Controllers for blood pressure reading operations.
 
-import { Request, Response } from "express";
+import { Response } from "express";
 import { BloodPressureReading } from "../models/BloodPressureReading";
-import { ApiResponse, PaginatedResponse, BloodPressureStats } from "../types";
+import {
+  ApiResponse,
+  PaginatedResponse,
+  BloodPressureStats,
+  AuthenticatedRequest,
+} from "../types";
+import { parseQueryInt } from "../utils";
 
 // @desc    Add a new blood pressure reading
 // @route   POST /api/readings
 // @access  Private
-export const addReading = async (req: Request, res: Response<ApiResponse>) => {
+export const addReading = async (
+  req: AuthenticatedRequest,
+  res: Response<ApiResponse>
+) => {
   try {
     const { systolic, diastolic } = req.body;
-    const userId = (req as any).user?._id;
+    const userId = req.user?._id;
 
     if (!userId) {
       return res.status(401).json({
@@ -68,11 +77,11 @@ export const addReading = async (req: Request, res: Response<ApiResponse>) => {
 // @route   GET /api/readings
 // @access  Private
 export const getReadings = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response<PaginatedResponse<any>>
 ) => {
   try {
-    const userId = (req as any).user?._id;
+    const userId = req.user?._id;
     if (!userId) {
       return res.status(401).json({
         success: false,
@@ -81,8 +90,8 @@ export const getReadings = async (
     }
 
     // Pagination parameters
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
+    const page = parseQueryInt(req.query.page, 1);
+    const limit = parseQueryInt(req.query.limit, 100);
     const skip = (page - 1) * limit;
 
     // Get total count for pagination
@@ -118,11 +127,11 @@ export const getReadings = async (
 // @route   GET /api/readings/average
 // @access  Private
 export const getAverageBloodPressure = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response<ApiResponse<BloodPressureStats>>
 ) => {
   try {
-    const userId = (req as any).user?._id;
+    const userId = req.user?._id;
     if (!userId) {
       return res.status(401).json({
         success: false,
@@ -161,8 +170,8 @@ export const getAverageBloodPressure = async (
     }
 
     const result: BloodPressureStats = {
-      averageSystolic: parseFloat(stats[0].averageSystolic.toFixed(2)),
-      averageDiastolic: parseFloat(stats[0].averageDiastolic.toFixed(2)),
+      averageSystolic: Math.round(stats[0].averageSystolic),
+      averageDiastolic: Math.round(stats[0].averageDiastolic),
       count: stats[0].count,
       minSystolic: stats[0].minSystolic,
       maxSystolic: stats[0].maxSystolic,
