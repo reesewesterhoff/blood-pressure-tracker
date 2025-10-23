@@ -22,7 +22,7 @@ describe("validatePassword", () => {
     const result = validatePassword("Short1!");
     expect(result.isValidPassword).toBe(false);
     expect(result.errors).toContain(
-      "Password must be at least 12 characters long."
+      "Password must be between 8 and 64 characters long."
     );
   });
 
@@ -59,7 +59,8 @@ describe("validatePassword", () => {
   });
 
   test("should reject common weak passwords", () => {
-    const weakPasswords = ["password", "123456", "qwerty"];
+    // Use 8+ character passwords since shorter ones are caught by length check
+    const weakPasswords = ["password", "123456789", "Password1"];
 
     weakPasswords.forEach((password) => {
       const result = validatePassword(password);
@@ -82,7 +83,7 @@ describe("validatePassword", () => {
     const result = validatePassword("");
     expect(result.isValidPassword).toBe(false);
     expect(result.errors).toContain(
-      "Password must be at least 12 characters long."
+      "Password must be between 8 and 64 characters long."
     );
   });
 });

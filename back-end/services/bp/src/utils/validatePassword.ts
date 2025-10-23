@@ -1,3 +1,5 @@
+import { COMMON_PASSWORDS, MIN_LENGTH, MAX_LENGTH } from "./password-constants";
+
 /**
  * Represents the result of a password validation.
  */
@@ -15,10 +17,11 @@ interface PasswordValidationResult {
 export function validatePassword(password: string): PasswordValidationResult {
   const errors: string[] = [];
 
-  // Rule 1: Minimum length (e.g., 12 characters)
-  const minLength = 12;
-  if (password.length < minLength) {
-    errors.push(`Password must be at least ${minLength} characters long.`);
+  // Rule 1: Minimum and maximum passwordlength
+  if (password.length <= MIN_LENGTH || password.length >= MAX_LENGTH) {
+    errors.push(
+      `Password must be between ${MIN_LENGTH} and ${MAX_LENGTH} characters long.`
+    );
   }
 
   // Rule 2: At least one uppercase letter
@@ -44,9 +47,8 @@ export function validatePassword(password: string): PasswordValidationResult {
     );
   }
 
-  // Optional Rule 6: Check for common weak passwords or patterns (more advanced)
-  const commonPasswords = ["password", "123456", "qwerty"];
-  if (commonPasswords.includes(password.toLowerCase())) {
+  // Optional Rule 6: Check for common weak passwords or patterns
+  if (COMMON_PASSWORDS.includes(password.toLowerCase())) {
     errors.push("Password is too common or easily guessable.");
   }
 
