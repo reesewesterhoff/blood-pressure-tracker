@@ -1,4 +1,4 @@
-import { COMMON_PASSWORDS, MIN_LENGTH, MAX_LENGTH } from "./password-constants";
+import { COMMON_PASSWORDS, MIN_LENGTH, MAX_LENGTH } from "./constants";
 
 /**
  * Represents the result of a password validation.
