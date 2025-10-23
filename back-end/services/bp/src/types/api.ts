@@ -1,6 +1,13 @@
 import { Request } from "express";
 import { IUser } from "./user";
 
+// Extend Express Request to include our User type
+declare global {
+  namespace Express {
+    interface User extends IUser {}
+  }
+}
+
 // Request types with user
 export interface AuthenticatedRequest extends Request {
   user?: IUser;
@@ -22,6 +29,3 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
     totalPages: number;
   };
 }
-
-
-
