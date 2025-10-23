@@ -4,7 +4,7 @@ import express, { Request, Response, NextFunction } from "express";
 import passport from "passport";
 import mongoose from "mongoose";
 import { User } from "../models/User";
-import { ensureAuth } from "../middleware";
+import { ensureAuth, CustomError } from "../middleware";
 import { validatePassword, validateEmail } from "../utils";
 import { ApiResponse, IUser } from "../types";
 
@@ -16,33 +16,33 @@ const authRoutes = express.Router();
 // @route   POST /auth/register
 authRoutes.post(
   "/register",
-  async (req: Request, res: Response<ApiResponse>) => {
-    const { email, password, displayName, firstName, lastName } = req.body;
-
-    if (!email || !password || !displayName) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide email, password, and display name.",
-      });
-    }
-
-    // validate email
-    const { isValidEmail, message } = validateEmail(email);
-    if (!isValidEmail) {
-      return res.status(400).json({ success: false, message });
-    }
-
-    // validate password
-    const { isValidPassword, errors } = validatePassword(password);
-    if (!isValidPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Password validation failed.",
-        errors,
-      });
-    }
-
+  async (req: Request, res: Response<ApiResponse>, next: NextFunction) => {
     try {
+      const { email, password, displayName, firstName, lastName } = req.body;
+
+      if (!email || !password || !displayName) {
+        return res.status(400).json({
+          success: false,
+          message: "Please provide email, password, and display name.",
+        });
+      }
+
+      // validate email
+      const { isValidEmail, message } = validateEmail(email);
+      if (!isValidEmail) {
+        return res.status(400).json({ success: false, message });
+      }
+
+      // validate password
+      const { isValidPassword, errors } = validatePassword(password);
+      if (!isValidPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "Password validation failed.",
+          errors,
+        });
+      }
+
       const existingUser = await User.findOne({
         email: email.toLowerCase(),
       });
@@ -66,12 +66,9 @@ authRoutes.post(
       // Log in the user immediately after registration
       req.login(newUser, (err) => {
         if (err) {
-          console.error("Error logging in after registration:", err);
-          return res.status(500).json({
-            success: false,
-            message:
-              "Registration successful, but failed to log in automatically.",
-          });
+          return next(
+            new CustomError(`Registration login failed: ${err.message}`)
+          );
         }
         // Password is automatically excluded via schema toJSON transform
         return res.status(201).json({
@@ -81,20 +78,7 @@ authRoutes.post(
         });
       });
     } catch (error) {
-      console.error("Registration error:", error);
-      if (error instanceof mongoose.Error.ValidationError) {
-        const validationErrors = Object.values(error.errors).map(
-          (err) => err.message
-        );
-        return res.status(400).json({
-          success: false,
-          message: "Validation Error",
-          errors: validationErrors,
-        });
-      }
-      res
-        .status(500)
-        .json({ success: false, message: "Server error during registration." });
+      next(error);
     }
   }
 );
@@ -112,8 +96,7 @@ authRoutes.post(
         info: { message: string } | undefined
       ) => {
         if (err) {
-          console.error("Local login error:", err);
-          return next(err);
+          return next(new CustomError(`Authentication failed: ${err.message}`));
         }
         if (!user) {
           return res.status(401).json({
@@ -123,10 +106,9 @@ authRoutes.post(
         }
         req.logIn(user, (err) => {
           if (err) {
-            console.error("Error during req.logIn:", err);
-            return res
-              .status(500)
-              .json({ success: false, message: "Error logging in." });
+            return next(
+              new CustomError(`Login session creation failed: ${err.message}`)
+            );
           }
           // Password is automatically excluded via schema toJSON transform
           return res.status(200).json({
