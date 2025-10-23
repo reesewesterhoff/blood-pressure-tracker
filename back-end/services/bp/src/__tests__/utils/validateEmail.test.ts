@@ -38,8 +38,11 @@ describe("validateEmail", () => {
   });
 
   test("should handle edge cases", () => {
-    // Test with undefined/null
-    expect(() => validateEmail(undefined as any)).toThrow();
-    expect(() => validateEmail(null as any)).toThrow();
+    // Test with undefined/null - should return invalid, not throw
+    const undefinedResult = validateEmail(undefined as any);
+    expect(undefinedResult.isValidEmail).toBe(false);
+
+    const nullResult = validateEmail(null as any);
+    expect(nullResult.isValidEmail).toBe(false);
   });
 });

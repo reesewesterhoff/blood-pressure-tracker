@@ -13,12 +13,7 @@ interface EmailValidationResult {
  * @returns An EmailValidationResult object.
  */
 export function validateEmail(email: string): EmailValidationResult {
-  // Handle null/undefined - throw error for these
-  if (email === null || email === undefined) {
-    throw new Error("Email must be a non-empty string");
-  }
-
-  // Handle empty string and non-string types - return invalid
+  // Handle null/undefined/empty string or non-string types
   if (!email || typeof email !== "string") {
     return { isValidEmail: false, message: "Invalid email address format." };
   }
