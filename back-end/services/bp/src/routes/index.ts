@@ -1,7 +1,7 @@
 // Description: Centralized exports for all route modules
 
 // Authentication routes
-export { authRoutes } from "./authRoutes";
+export * from "./authRoutes";
 
 // Blood pressure routes
-export { bloodPressureRoutes } from "./bloodPressureRoutes";
+export * from "./bloodPressureRoutes";

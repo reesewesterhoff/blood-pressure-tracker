@@ -2,11 +2,10 @@
 
 import express, { Request, Response, NextFunction } from "express";
 import passport from "passport";
-import mongoose from "mongoose";
-import { User } from "../models/User";
+import { User } from "../models";
 import { ensureAuth, CustomError } from "../middleware";
 import { validatePassword, validateEmail } from "../utils";
-import { ApiResponse, IUser } from "../types";
+import { ApiResponse } from "../types";
 
 const authRoutes = express.Router();
 

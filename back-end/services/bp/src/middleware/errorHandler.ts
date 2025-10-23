@@ -1,6 +1,6 @@
 // Description: Centralized error handling middleware
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { ApiResponse } from "../types";
 

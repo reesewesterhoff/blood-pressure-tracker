@@ -1,22 +1,13 @@
 // Description: Centralized exports for all middleware functions
 
 // Authentication middleware
-export { ensureAuth } from "./authMiddleware";
+export * from "./authMiddleware";
 
 // Error handling middleware
-export { CustomError, errorHandler, notFoundHandler } from "./errorHandler";
+export * from "./errorHandler";
 
 // Input sanitization middleware
-export {
-  sanitizeUserInput,
-  sanitizeApiInput,
-  createInputSanitizer,
-} from "./inputSanitizer";
+export * from "./inputSanitizer";
 
 // Rate limiting middleware
-export {
-  authRateLimit,
-  generalRateLimit,
-  strictRateLimit,
-  createRateLimiter,
-} from "./rateLimiter";
+export * from "./rateLimiter";

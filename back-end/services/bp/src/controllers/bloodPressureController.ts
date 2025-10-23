@@ -1,7 +1,7 @@
 // Description: Controllers for blood pressure reading operations.
 
 import { Request, Response } from "express";
-import { BloodPressureReading } from "../models/BloodPressureReading";
+import { BloodPressureReading } from "../models";
 import { ApiResponse, PaginatedResponse, BloodPressureStats } from "../types";
 import { parseQueryInt } from "../utils";
 
