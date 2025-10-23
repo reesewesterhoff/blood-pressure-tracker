@@ -10,4 +10,4 @@ export * from "./validatePassword";
 export * from "./parseQueryParams";
 
 // Password constants
-export * from "./password-constants";
+export * from "./constants";
