@@ -73,13 +73,11 @@ authRoutes.post(
               "Registration successful, but failed to log in automatically.",
           });
         }
-        // Send back user object without password
-        const userResponse = newUser.toObject();
-        delete userResponse.password;
+        // Password is automatically excluded via schema toJSON transform
         return res.status(201).json({
           success: true,
           message: "User registered and logged in successfully",
-          data: userResponse,
+          data: newUser,
         });
       });
     } catch (error) {
@@ -130,13 +128,11 @@ authRoutes.post(
               .status(500)
               .json({ success: false, message: "Error logging in." });
           }
-          // Send back user object without password
-          const userResponse = (user as IUser).toObject();
-          delete userResponse.password;
+          // Password is automatically excluded via schema toJSON transform
           return res.status(200).json({
             success: true,
             message: "Logged in successfully",
-            data: userResponse,
+            data: user,
           });
         });
       }
@@ -197,11 +193,9 @@ authRoutes.get("/logout", (req, res) => {
 // @desc    Get current logged-in user
 // @route   GET /auth/user
 authRoutes.get("/user", ensureAuth, (req, res) => {
-  // req.user is populated by Passport. Ensure password is not sent.
+  // req.user is populated by Passport. Password is automatically excluded via schema toJSON transform.
   if (req.user) {
-    const userResponse = (req.user as IUser).toObject();
-    delete userResponse.password; // Ensure password is not sent
-    res.json(userResponse);
+    res.json(req.user);
   } else {
     res.status(404).json({ message: "No user found in session." });
   }

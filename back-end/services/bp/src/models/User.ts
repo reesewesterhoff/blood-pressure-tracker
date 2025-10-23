@@ -4,47 +4,57 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs"; // For password hashing
 import { IUser } from "../types";
 
-const UserSchema: Schema = new Schema({
-  googleId: {
-    type: String,
-    unique: true,
-    sparse: true, // Allows multiple documents to have null/missing googleId
+const UserSchema: Schema = new Schema(
+  {
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows multiple documents to have null/missing googleId
+    },
+    displayName: {
+      // For local accounts, this could be a username or derived from email
+      type: String,
+      required: true,
+    },
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+    },
+    email: {
+      // Email will be the username for local strategy
+      type: String,
+      required: function (this: IUser) {
+        return !this.googleId;
+      }, // Required if not a Google user
+      unique: true,
+      sparse: true, // Allows multiple documents to have null/missing email if googleId is present (though email is usually always present)
+      match: [/.+\@.+\..+/, "Please fill a valid email address"],
+    },
+    password: {
+      type: String,
+      required: function (this: IUser) {
+        return !this.googleId;
+      }, // Required if not a Google user
+    },
+    image: {
+      type: String,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  displayName: {
-    // For local accounts, this could be a username or derived from email
-    type: String,
-    required: true,
-  },
-  firstName: {
-    type: String,
-  },
-  lastName: {
-    type: String,
-  },
-  email: {
-    // Email will be the username for local strategy
-    type: String,
-    required: function (this: IUser) {
-      return !this.googleId;
-    }, // Required if not a Google user
-    unique: true,
-    sparse: true, // Allows multiple documents to have null/missing email if googleId is present (though email is usually always present)
-    match: [/.+\@.+\..+/, "Please fill a valid email address"],
-  },
-  password: {
-    type: String,
-    required: function (this: IUser) {
-      return !this.googleId;
-    }, // Required if not a Google user
-  },
-  image: {
-    type: String,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  {
+    toJSON: {
+      transform: function (doc, ret) {
+        delete ret.password;
+        return ret;
+      },
+    },
+  }
+);
 
 // Pre-save hook to hash password for local users
 UserSchema.pre<IUser>("save", async function (next) {
