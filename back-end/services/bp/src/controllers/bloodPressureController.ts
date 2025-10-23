@@ -1,22 +1,14 @@
 // Description: Controllers for blood pressure reading operations.
 
-import { Response } from "express";
+import { Request, Response } from "express";
 import { BloodPressureReading } from "../models/BloodPressureReading";
-import {
-  ApiResponse,
-  PaginatedResponse,
-  BloodPressureStats,
-  AuthenticatedRequest,
-} from "../types";
+import { ApiResponse, PaginatedResponse, BloodPressureStats } from "../types";
 import { parseQueryInt } from "../utils";
 
 // @desc    Add a new blood pressure reading
 // @route   POST /api/readings
 // @access  Private
-export const addReading = async (
-  req: AuthenticatedRequest,
-  res: Response<ApiResponse>
-) => {
+export const addReading = async (req: Request, res: Response<ApiResponse>) => {
   try {
     const { systolic, diastolic } = req.body;
     const userId = req.user?._id;
@@ -77,7 +69,7 @@ export const addReading = async (
 // @route   GET /api/readings
 // @access  Private
 export const getReadings = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response<PaginatedResponse<any>>
 ) => {
   try {
@@ -127,7 +119,7 @@ export const getReadings = async (
 // @route   GET /api/readings/average
 // @access  Private
 export const getAverageBloodPressure = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response<ApiResponse<BloodPressureStats>>
 ) => {
   try {
