@@ -1,52 +1,135 @@
-/* color palette from <https://github.com/vuejs/theme> */
-:root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+/*
+  Tailwind v4 theme tokens + light/dark mode.
+  Palette optimized for a blood pressure tracker: medical blue (primary), heart red (secondary),
+  and a light gray background in light mode for clinical clarity.
+*/
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+/* Enable class-based dark mode: use `dark:` utilities by toggling a `.dark` class on root */
+@custom-variant dark (&:where(.dark, .dark *));
 
-  --vt-c-indigo: #2c3e50;
+/* Theme tokens consumable by Tailwind utility classes (e.g., bg-primary-600, text-secondary-50) */
+@theme {
+  /* App surfaces and content (defaults; overridden by mode below) */
+  --color-bg: #0b1211;
+  --color-surface: #101a19;
+  --color-content: #0f172a; /* dark slate text for light mode contrast */
+  --color-muted: #64748b; /* slate-500 */
+  --color-border: #e5e7eb; /* gray-200 in light */
 
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+  /* Primary (medical blue) */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  /* Secondary (heart red) */
+  --color-secondary-50: #fef2f2;
+  --color-secondary-100: #fee2e2;
+  --color-secondary-200: #fecaca;
+  --color-secondary-300: #fca5a5;
+  --color-secondary-400: #f87171;
+  --color-secondary-500: #ef4444;
+  --color-secondary-600: #dc2626; /* primary heart red */
+  --color-secondary-700: #b91c1c;
+  --color-secondary-800: #991b1b;
+  --color-secondary-900: #7f1d1d;
+
+  /* Neutral (clinic gray) */
+  --color-neutral-50: #f9fafb;
+  --color-neutral-100: #f3f4f6; /* light gray background */
+  --color-neutral-200: #e5e7eb; /* borders */
+  --color-neutral-300: #d1d5db;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #111827;
+
+  /* Status */
+  /* Success (green) */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #16a34a; /* base */
+  --color-success-600: #15803d;
+  --color-success-700: #166534;
+  --color-success-800: #14532d;
+  --color-success-900: #052e16;
+
+  /* Danger (heart red) */
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
+  --color-danger-400: #ef4444;
+  --color-danger-500: #b91c1c; /* base, deeper for contrast */
+  --color-danger-600: #991b1b;
+  --color-danger-700: #7f1d1d;
+  --color-danger-800: #661313;
+  --color-danger-900: #450a0a;
+
+  /* Warning (amber) */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #f59e0b;
+  --color-warning-500: #d97706; /* base */
+  --color-warning-600: #b45309;
+  --color-warning-700: #92400e;
+  --color-warning-800: #78350f;
+  --color-warning-900: #451a03;
+
+  /* Info (sky) */
+  --color-info-50: #f0f9ff;
+  --color-info-100: #e0f2fe;
+  --color-info-200: #bae6fd;
+  --color-info-300: #7dd3fc;
+  --color-info-400: #38bdf8;
+  --color-info-500: #0ea5e9; /* base */
+  --color-info-600: #0284c7;
+  --color-info-700: #0369a1;
+  --color-info-800: #075985;
+  --color-info-900: #0c4a6e;
 }
 
-/* semantic color variables for this project */
+/* Light mode token overrides (default) */
 :root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
-
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+  --color-bg: #f3f4f6; /* neutral-100 */
+  --color-surface: #ffffff;
+  --color-content: #0f172a; /* slate-900 */
+  --color-muted: #64748b; /* slate-500 */
+  --color-border: #e5e7eb; /* neutral-200 */
 
   --section-gap: 160px;
 }
 
+/* Dark mode token overrides when `.dark` is present anywhere up the tree */
+:root.dark {
+  --color-bg: #0b1211;
+  --color-surface: #101a19;
+  --color-content: #e8efed;
+  --color-muted: #94a3a2;
+  --color-border: #1f2a29;
+}
+
+/* Respect user's system preference as a default if `.dark` isn't used */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
+  :root:not(.dark) {
+    --color-bg: #0b1211;
+    --color-surface: #101a19;
+    --color-content: #e8efed;
+    --color-muted: #94a3a2;
+    --color-border: #1f2a29;
   }
 }
 
@@ -60,8 +143,8 @@
 
 body {
   min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
+  color: var(--color-content);
+  background: var(--color-bg);
   transition:
     color 0.5s,
     background-color 0.5s;
