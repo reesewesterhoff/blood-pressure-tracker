@@ -5,7 +5,7 @@
 */
 
 /* Enable class-based dark mode: use `dark:` utilities by toggling a `.dark` class on root */
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark *));
 
 /* Theme tokens consumable by Tailwind utility classes (e.g., bg-primary-600, text-secondary-50) */
 @theme {
