@@ -2,35 +2,38 @@
 import { computed, ref } from 'vue'
 
 interface InputProps {
-  /** The input value for controlled mode. When provided, the component is controlled by the parent. */
-  modelValue?: string
-  /** The label text displayed above the input field. */
-  label?: string
-  /** The input type (e.g., 'text', 'email', 'password', 'number'). Defaults to 'text'. */
-  type?: string
-  /** Placeholder text shown when the input is empty. */
-  placeholder?: string
-  /** Whether the input is required. Shows a red asterisk and sets aria-required. */
-  required?: boolean
+  /** The aria-describedby attribute, referencing an element that describes the input. */
+  ariaDescribedBy?: string
+  /** The aria-label for screen readers. Falls back to label if not provided. */
+  ariaLabel?: string
+  /** The autocomplete attribute value (e.g., 'email', 'name', 'off'). */
+  autocomplete?: string
+  /** Whether to show a clear button (X icon) when the input has a value. */
+  clearable?: boolean
   /** Whether the input is disabled. Applies disabled styling and prevents interaction. */
   disabled?: boolean
   /** The unique identifier for the input element. Auto-generated if not provided. */
   id?: string
+  /** The label text displayed above the input field. */
+  label?: string
+  /** The input value for controlled mode. When provided, the component is controlled by the parent. */
+  modelValue?: string
   /** The name attribute for the input element, used for form submission. */
   name?: string
-  /** The autocomplete attribute value (e.g., 'email', 'name', 'off'). */
-  autocomplete?: string
-  /** The aria-label for screen readers. Falls back to label if not provided. */
-  ariaLabel?: string
-  /** The aria-describedby attribute, referencing an element that describes the input. */
-  ariaDescribedBy?: string
+  /** Placeholder text shown when the input is empty. */
+  placeholder?: string
+  /** Whether the input is required. Shows a red asterisk and sets aria-required. */
+  required?: boolean
+  /** The input type (e.g., 'text', 'email', 'password', 'number'). Defaults to 'text'. */
+  type?: string
 }
 
 const props = withDefaults(defineProps<InputProps>(), {
-  modelValue: undefined,
-  type: 'text',
-  required: false,
+  clearable: false,
   disabled: false,
+  modelValue: undefined,
+  required: false,
+  type: 'text',
 })
 
 const emit = defineEmits<{
@@ -65,6 +68,21 @@ function handleInput(event: Event) {
     inputValue.value = event.target.value
   }
 }
+
+// Check if clear button should be visible
+const showClearButton = computed(() => {
+  return props.clearable && !props.disabled && inputValue.value.length > 0
+})
+
+// Handle clear button click
+function handleClear() {
+  inputValue.value = ''
+  // Focus the input after clearing
+  const inputElement = document.getElementById(inputId.value)
+  if (inputElement instanceof HTMLInputElement) {
+    inputElement.focus()
+  }
+}
 </script>
 
 <template>
@@ -78,20 +96,43 @@ function handleInput(event: Event) {
       {{ label }}
       <span v-if="required" class="text-red-500 dark:text-red-400" aria-label="required">*</span>
     </label>
-    <input
-      :id="inputId"
-      :name="name || inputId"
-      :type="type"
-      :value="inputValue"
-      :placeholder="placeholder"
-      :required="required"
-      :disabled="disabled"
-      :autocomplete="autocomplete"
-      :aria-label="ariaLabel || label"
-      :aria-describedby="ariaDescribedBy"
-      :aria-required="required"
-      class="w-full px-4 py-2 text-base text-neutral-900 dark:text-neutral-100 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-md shadow-sm placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-primary-500 dark:focus:border-primary-400 disabled:bg-neutral-100 dark:disabled:bg-neutral-900 disabled:text-neutral-500 dark:disabled:text-neutral-400 disabled:cursor-not-allowed disabled:border-neutral-200 dark:disabled:border-neutral-700 transition-colors duration-200"
-      @input="handleInput"
-    />
+    <div class="relative w-full">
+      <input
+        :id="inputId"
+        :name="name || inputId"
+        :type="type"
+        :value="inputValue"
+        :placeholder="placeholder"
+        :required="required"
+        :disabled="disabled"
+        :autocomplete="autocomplete"
+        :aria-label="ariaLabel || label"
+        :aria-describedby="ariaDescribedBy"
+        :aria-required="required"
+        :class="[
+          'w-full py-2 text-base text-neutral-900 dark:text-neutral-100 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-md shadow-sm placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-primary-500/30 dark:focus:ring-primary-400/30 focus:border-primary-500 dark:focus:border-primary-400 disabled:bg-neutral-100 dark:disabled:bg-neutral-900 disabled:text-neutral-500 dark:disabled:text-neutral-400 disabled:cursor-not-allowed disabled:border-neutral-200 dark:disabled:border-neutral-700 transition-colors duration-200',
+          clearable ? 'px-4 pr-10' : 'px-4',
+        ]"
+        @input="handleInput"
+      />
+      <button
+        v-if="showClearButton"
+        type="button"
+        @click="handleClear"
+        :aria-label="`Clear ${label || 'input'}`"
+        class="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50 transition-colors duration-200"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
   </div>
 </template>
