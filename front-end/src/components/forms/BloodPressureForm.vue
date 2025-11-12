@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import BaseInput from '@/components/input/BaseInput.vue'
 
-interface BloodPressureReading {
+export interface BloodPressureReading {
   systolic: number
   diastolic: number
 }
