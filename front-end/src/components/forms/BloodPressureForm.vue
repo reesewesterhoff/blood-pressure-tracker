@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import BaseInput from '@/components/input/BaseInput.vue'
-
-export interface BloodPressureReading {
-  systolic: number
-  diastolic: number
-}
+import type { BloodPressureReading } from '@/types/BloodPressure'
 
 const emit = defineEmits<{
   submit: [reading: BloodPressureReading]
