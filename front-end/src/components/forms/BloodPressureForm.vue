@@ -3,6 +3,14 @@ import { ref } from 'vue'
 import BaseInput from '@/components/input/BaseInput.vue'
 import type { BloodPressureReading } from '@/types/BloodPressure'
 
+interface Props {
+  disabled?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false,
+})
+
 const emit = defineEmits<{
   submit: [reading: BloodPressureReading]
 }>()
@@ -11,6 +19,10 @@ const systolic = ref('')
 const diastolic = ref('')
 
 function handleSubmit() {
+  if (props.disabled) {
+    return
+  }
+
   const systolicValue = Number.parseInt(systolic.value, 10)
   const diastolicValue = Number.parseInt(diastolic.value, 10)
 
@@ -64,9 +76,10 @@ function handleSubmit() {
     </div>
     <button
       type="submit"
-      class="w-full py-2.5 rounded-md bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+      :disabled="disabled"
+      class="w-full py-2.5 rounded-md bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600"
     >
-      Submit Reading
+      {{ disabled ? 'Submitting...' : 'Submit Reading' }}
     </button>
   </form>
 </template>
