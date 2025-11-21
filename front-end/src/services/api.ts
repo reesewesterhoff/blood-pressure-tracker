@@ -7,6 +7,7 @@
 
 import { getApiUrl } from '@/config/api'
 import type { BloodPressureReading } from '@/types/BloodPressure'
+import type { User } from '@/types/User'
 
 /**
  * Standard API response structure
@@ -98,6 +99,39 @@ async function request<T = unknown>(
     // Handle other unexpected errors
     throw new ApiError(error instanceof Error ? error.message : 'An unexpected error occurred', 0)
   }
+}
+
+/**
+ * API service methods for authentication
+ */
+export const authApi = {
+  /**
+   * Login with email and password
+   */
+  async login(email: string, password: string): Promise<ApiResponse<User>> {
+    return request<User>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    })
+  },
+
+  /**
+   * Logout the current user
+   */
+  async logout(): Promise<ApiResponse> {
+    return request('/auth/logout', {
+      method: 'GET',
+    })
+  },
+
+  /**
+   * Get the current authenticated user
+   */
+  async getCurrentUser(): Promise<ApiResponse<User>> {
+    return request<User>('/auth/user', {
+      method: 'GET',
+    })
+  },
 }
 
 /**
