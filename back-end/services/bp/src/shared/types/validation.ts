@@ -8,6 +8,3 @@ export interface PasswordValidationResult {
   isValidPassword: boolean;
   errors: string[];
 }
-
-
-

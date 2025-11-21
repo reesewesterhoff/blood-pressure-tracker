@@ -2,7 +2,7 @@
 
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import { ApiResponse } from "../types";
+import { ApiResponse } from "../types/api";
 
 interface AppError extends Error {
   statusCode?: number;

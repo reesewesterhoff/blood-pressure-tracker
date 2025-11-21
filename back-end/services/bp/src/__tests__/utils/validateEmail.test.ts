@@ -1,6 +1,6 @@
 // Tests for email validation utility
 
-import { validateEmail } from "../../utils";
+import { validateEmail } from "../../shared/utils";
 
 describe("validateEmail", () => {
   test("should validate correct email addresses", () => {

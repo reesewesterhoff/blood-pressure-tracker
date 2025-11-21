@@ -1,7 +1,7 @@
 // Description: Mongoose schema for Blood Pressure Readings.
 
 import mongoose, { Schema as MongooseSchema } from "mongoose";
-import { IBloodPressureReading } from "../types";
+import { IBloodPressureReading } from "../../shared/types";
 
 const BloodPressureReadingSchema: MongooseSchema = new MongooseSchema({
   user: {

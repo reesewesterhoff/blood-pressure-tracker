@@ -18,6 +18,3 @@ export interface BloodPressureStats {
   minDiastolic: number;
   maxDiastolic: number;
 }
-
-
-

@@ -6,7 +6,7 @@ import {
   getReadings,
   getAverageBloodPressure,
 } from "../controllers";
-import { ensureAuth } from "../middleware";
+import { ensureAuth } from "../../shared/middleware";
 
 const bloodPressureRoutes = express.Router();
 

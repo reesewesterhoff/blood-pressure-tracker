@@ -1,6 +1,6 @@
 // Tests for password validation utility
 
-import { validatePassword } from "../../utils";
+import { validatePassword } from "../../shared/utils";
 
 describe("validatePassword", () => {
   test("should validate strong passwords", () => {

@@ -2,7 +2,7 @@
 
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs"; // For password hashing
-import { IUser } from "../types";
+import { IUser } from "../../shared/types";
 
 const UserSchema: Schema = new Schema(
   {

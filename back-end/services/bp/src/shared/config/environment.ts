@@ -1,6 +1,6 @@
 // Description: Environment configuration validation and management
 
-import { EnvironmentConfig } from "../types";
+import { EnvironmentConfig } from "../types/environment";
 
 interface ValidationResult {
   isValid: boolean;

@@ -3,9 +3,9 @@
 import express, { Request, Response, NextFunction } from "express";
 import passport from "passport";
 import { User } from "../models";
-import { ensureAuth, CustomError } from "../middleware";
-import { validatePassword, validateEmail } from "../utils";
-import { ApiResponse } from "../types";
+import { ensureAuth, CustomError } from "../../shared/middleware";
+import { validatePassword, validateEmail } from "../../shared/utils";
+import { ApiResponse } from "../../shared/types";
 
 const authRoutes = express.Router();
 

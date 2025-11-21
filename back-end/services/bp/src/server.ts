@@ -5,16 +5,21 @@ import expressSession from "express-session";
 import connectMongoSession from "connect-mongo";
 import passportMain from "passport";
 
-import { connectDB, configurePassport, loadEnvironmentConfig } from "./config";
+import {
+  connectDB,
+  configurePassport,
+  loadEnvironmentConfig,
+} from "./shared/config";
 import {
   errorHandler,
   notFoundHandler,
   generalRateLimit,
   authRateLimit,
   sanitizeApiInput,
-} from "./middleware";
+} from "./shared/middleware";
 
-import { bloodPressureRoutes, authRoutes } from "./routes";
+import { authRoutes } from "./auth/routes";
+import { bloodPressureRoutes } from "./readings/routes";
 
 // Load environment variables
 dotenvConfig.config();

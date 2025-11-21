@@ -2,8 +2,12 @@
 
 import { Request, Response } from "express";
 import { BloodPressureReading } from "../models";
-import { ApiResponse, PaginatedResponse, BloodPressureStats } from "../types";
-import { parseQueryInt } from "../utils";
+import {
+  ApiResponse,
+  PaginatedResponse,
+  BloodPressureStats,
+} from "../../shared/types";
+import { parseQueryInt } from "../../shared/utils";
 
 // @desc    Add a new blood pressure reading
 // @route   POST /api/readings

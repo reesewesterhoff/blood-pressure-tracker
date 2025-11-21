@@ -3,8 +3,8 @@
 import passportInstance from "passport";
 import { Strategy as GoogleStrategyPassport } from "passport-google-oauth20";
 import { Strategy as LocalStrategyPassport } from "passport-local"; // For email/password
-import { User } from "../models/User";
-import { IUser } from "../types";
+import { User } from "../../auth/models/User";
+import { IUser } from "../types/user";
 
 export function configurePassport() {
   // Local Strategy (email/password)
