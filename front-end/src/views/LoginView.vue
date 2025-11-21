@@ -4,8 +4,10 @@ import { useRouter } from 'vue-router'
 import { Eye, EyeOff, Loader2 } from 'lucide-vue-next'
 import BaseInput from '@/components/input/BaseInput.vue'
 import ToastContainer from '@/components/toast/ToastContainer.vue'
+import GoogleIcon from '@/components/icons/GoogleIcon.vue'
 import { authApi, ApiError } from '@/services/api'
 import { useToast } from '@/composables/useToast'
+import { getApiUrl } from '@/config/api'
 
 const router = useRouter()
 const { toasts, showSuccess, showError, removeToast } = useToast()
@@ -14,6 +16,7 @@ const email = ref('')
 const password = ref('')
 const isLoading = ref(false)
 const showPassword = ref(false)
+const rememberMe = ref(false)
 
 async function handleSubmit() {
   if (isLoading.value) return
@@ -54,26 +57,30 @@ async function handleSubmit() {
 function togglePasswordVisibility() {
   showPassword.value = !showPassword.value
 }
+
+function getGoogleAuthUrl(): string {
+  return getApiUrl('/auth/google')
+}
 </script>
 
 <template>
-  <div class="min-h-[calc(100vh-200px)] flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
+  <div class="min-h-full flex justify-center p-4">
+    <div class="w-full max-w-md flex flex-col gap-4">
       <div
-        class="p-8 sm:p-10 rounded-xl bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700"
+        class="p-8 rounded-xl bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 flex flex-col gap-4"
       >
         <!-- Header -->
-        <div class="text-center mb-8">
+        <div class="text-center">
           <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
             Welcome Back
           </h1>
-          <p class="text-neutral-600 dark:text-neutral-400">
+          <p class="text-neutral-500 dark:text-neutral-400">
             Sign in to track your blood pressure readings
           </p>
         </div>
 
         <!-- Login Form -->
-        <form @submit.prevent="handleSubmit" class="space-y-6">
+        <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
           <!-- Email Input -->
           <div>
             <BaseInput
@@ -84,11 +91,7 @@ function togglePasswordVisibility() {
               autocomplete="email"
               required
               :disabled="isLoading"
-              aria-describedby="email-help"
             />
-            <p id="email-help" class="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-              We'll never share your email with anyone else.
-            </p>
           </div>
 
           <!-- Password Input -->
@@ -102,29 +105,42 @@ function togglePasswordVisibility() {
                 autocomplete="current-password"
                 required
                 :disabled="isLoading"
-                aria-describedby="password-help"
               />
               <button
                 type="button"
                 @click="togglePasswordVisibility"
                 :disabled="isLoading"
-                class="absolute right-3 top-9 text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50 rounded p-1 transition-colors"
+                class="absolute right-3 top-6 text-neutral-500 dark:text-neutral-400 p-1 transition-colors"
                 :aria-label="showPassword ? 'Hide password' : 'Show password'"
               >
                 <EyeOff v-if="showPassword" />
                 <Eye v-else />
               </button>
             </div>
-            <p id="password-help" class="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-              Must be at least 8 characters long.
-            </p>
+          </div>
+
+          <!-- Remember Me Checkbox -->
+          <div class="flex items-center">
+            <input
+              id="remember-me"
+              v-model="rememberMe"
+              type="checkbox"
+              :disabled="isLoading"
+              class="h-4 w-4 rounded accent-primary-600 dark:accent-primary-500 cursor-pointer"
+            />
+            <label
+              for="remember-me"
+              class="pl-2 text-sm text-neutral-700 dark:text-neutral-300 cursor-pointer"
+            >
+              Remember me
+            </label>
           </div>
 
           <!-- Submit Button -->
           <button
             type="submit"
             :disabled="isLoading"
-            class="w-full py-3 rounded-md bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 shadow-sm hover:shadow-md"
+            class="w-full py-2.5 rounded-md bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600"
           >
             <span v-if="isLoading" class="flex items-center justify-center gap-2">
               <Loader2 class="animate-spin" />
@@ -135,28 +151,40 @@ function togglePasswordVisibility() {
         </form>
 
         <!-- Divider -->
-        <div class="relative my-6">
+        <div class="relative">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-neutral-300 dark:border-neutral-600"></div>
           </div>
           <div class="relative flex justify-center text-sm">
             <span class="px-2 bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
-              New to Blood Pressure Tracker?
+              Or
             </span>
           </div>
         </div>
 
-        <!-- Register Link -->
-        <div class="text-center">
-          <p class="text-sm text-neutral-600 dark:text-neutral-400">
-            Don't have an account?
-            <router-link
-              to="/register"
-              class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50 rounded"
-            >
-              Sign up here
-            </router-link>
-          </p>
+        <!-- Google Sign In Button -->
+        <a
+          :href="getGoogleAuthUrl()"
+          class="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-md border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50"
+        >
+          <GoogleIcon :size="20" />
+          <span>Sign in with Google</span>
+        </a>
+
+        <!-- Forgot Password and Sign Up Links -->
+        <div class="flex items-center justify-between text-sm">
+          <router-link
+            to="/forgot-password"
+            class="text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
+          >
+            Forgot password?
+          </router-link>
+          <router-link
+            to="/register"
+            class="text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
+          >
+            Sign up
+          </router-link>
         </div>
       </div>
 
