@@ -2,7 +2,6 @@
 import { RouterLink } from 'vue-router'
 import ThemeToggle from '../theme-toggle/ThemeToggle.vue'
 import LogoImage from '../logo-image/LogoImage.vue'
-import NavBar from '../nav-bar/NavBar.vue'
 </script>
 
 <template>
@@ -20,7 +19,6 @@ import NavBar from '../nav-bar/NavBar.vue'
               BP Tracker
             </h3>
           </RouterLink>
-          <NavBar />
         </div>
         <ThemeToggle />
       </div>
