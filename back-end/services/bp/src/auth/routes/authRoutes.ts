@@ -173,13 +173,24 @@ authRoutes.get("/logout", (req, res) => {
 
 // @desc    Get current logged-in user
 // @route   GET /auth/user
-authRoutes.get("/user", ensureAuth, (req, res) => {
-  // req.user is populated by Passport. Password is automatically excluded via schema toJSON transform.
-  if (req.user) {
-    res.json(req.user);
-  } else {
-    res.status(404).json({ message: "No user found in session." });
+authRoutes.get(
+  "/user",
+  ensureAuth,
+  (req: Request, res: Response<ApiResponse>) => {
+    // req.user is populated by Passport. Password is automatically excluded via schema toJSON transform.
+    if (req.user) {
+      res.status(200).json({
+        success: true,
+        message: "User retrieved successfully",
+        data: req.user,
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "No user found in session.",
+      });
+    }
   }
-});
+);
 
 export { authRoutes };
