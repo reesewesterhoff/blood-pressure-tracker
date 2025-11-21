@@ -14,6 +14,12 @@ export const routes = [
     displayName: 'History',
     component: () => import('../views/HistoryView.vue'),
   },
+  {
+    path: '/login',
+    name: 'login',
+    displayName: 'Login',
+    component: () => import('../views/LoginView.vue'),
+  },
 ]
 
 const router = createRouter({
