@@ -16,6 +16,7 @@ export interface ApiResponse<T = unknown> {
   success: boolean
   message?: string
   data?: T
+  errors?: string[]
 }
 
 /**
@@ -105,6 +106,22 @@ async function request<T = unknown>(
  * API service methods for authentication
  */
 export const authApi = {
+  /**
+   * Register a new user with email and password
+   */
+  async register(
+    email: string,
+    password: string,
+    displayName: string,
+    firstName?: string,
+    lastName?: string,
+  ): Promise<ApiResponse<User>> {
+    return request<User>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, displayName, firstName, lastName }),
+    })
+  },
+
   /**
    * Login with email and password
    */

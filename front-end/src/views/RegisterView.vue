@@ -1,0 +1,259 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { Eye, EyeOff, Loader2 } from 'lucide-vue-next'
+import BaseInput from '@/components/input/BaseInput.vue'
+import ToastContainer from '@/components/toast/ToastContainer.vue'
+import GoogleIcon from '@/components/icons/GoogleIcon.vue'
+import { authApi, ApiError } from '@/services/api'
+import { useToast } from '@/composables/useToast'
+import { getApiUrl } from '@/config/api'
+
+const router = useRouter()
+const { toasts, showSuccess, showError, removeToast } = useToast()
+
+const email = ref('')
+const password = ref('')
+const confirmPassword = ref('')
+const displayName = ref('')
+const firstName = ref('')
+const lastName = ref('')
+const isLoading = ref(false)
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
+
+async function handleSubmit() {
+  if (isLoading.value) return
+
+  // Basic validation
+  if (!email.value || !password.value || !displayName.value) {
+    showError('Please enter email, password, and display name.')
+    return
+  }
+
+  if (password.value !== confirmPassword.value) {
+    showError('Passwords do not match. Please try again.')
+    return
+  }
+
+  isLoading.value = true
+
+  try {
+    await authApi.register(
+      email.value,
+      password.value,
+      displayName.value,
+      firstName.value || undefined,
+      lastName.value || undefined,
+    )
+    showSuccess('Account created successfully!')
+    // Redirect to home page after successful registration
+    setTimeout(() => {
+      router.push('/')
+    }, 500)
+  } catch (error) {
+    if (error instanceof ApiError) {
+      if (error.status === 400) {
+        // Handle validation errors from backend
+        let errorMessage = error.message || 'Registration failed. Please check your input.'
+        if (error.response?.errors && Array.isArray(error.response.errors)) {
+          errorMessage = error.response.errors.join(', ')
+        }
+        showError(errorMessage)
+      } else if (error.status === 0) {
+        showError('Unable to connect to the server. Please check your connection.')
+      } else {
+        showError(error.message || 'Registration failed. Please try again.')
+      }
+    } else {
+      showError('An unexpected error occurred. Please try again.')
+      console.error('Unexpected error:', error)
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
+
+function togglePasswordVisibility() {
+  showPassword.value = !showPassword.value
+}
+
+function toggleConfirmPasswordVisibility() {
+  showConfirmPassword.value = !showConfirmPassword.value
+}
+
+function getGoogleAuthUrl(): string {
+  return getApiUrl('/auth/google')
+}
+</script>
+
+<template>
+  <div class="min-h-full flex justify-center p-4">
+    <div class="w-full max-w-md flex flex-col gap-4">
+      <div
+        class="p-8 rounded-xl bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 flex flex-col gap-4"
+      >
+        <!-- Header -->
+        <div class="text-center">
+          <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+            Create Account
+          </h1>
+          <p class="text-neutral-500 dark:text-neutral-400">
+            Sign up to start tracking your blood pressure readings
+          </p>
+        </div>
+
+        <!-- Registration Form -->
+        <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
+          <!-- Display Name Input -->
+          <div>
+            <BaseInput
+              v-model="displayName"
+              label="Display Name"
+              type="text"
+              placeholder="Enter your display name"
+              autocomplete="name"
+              required
+              :disabled="isLoading"
+            />
+          </div>
+
+          <!-- First Name Input -->
+          <div>
+            <BaseInput
+              v-model="firstName"
+              label="First Name (Optional)"
+              type="text"
+              placeholder="Enter your first name"
+              autocomplete="given-name"
+              :disabled="isLoading"
+            />
+          </div>
+
+          <!-- Last Name Input -->
+          <div>
+            <BaseInput
+              v-model="lastName"
+              label="Last Name (Optional)"
+              type="text"
+              placeholder="Enter your last name"
+              autocomplete="family-name"
+              :disabled="isLoading"
+            />
+          </div>
+
+          <!-- Email Input -->
+          <div>
+            <BaseInput
+              v-model="email"
+              label="Email"
+              type="email"
+              placeholder="Enter your email"
+              autocomplete="email"
+              required
+              :disabled="isLoading"
+            />
+          </div>
+
+          <!-- Password Input -->
+          <div>
+            <div class="relative">
+              <BaseInput
+                v-model="password"
+                label="Password"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="Enter your password"
+                autocomplete="new-password"
+                required
+                :disabled="isLoading"
+              />
+              <button
+                type="button"
+                @click="togglePasswordVisibility"
+                :disabled="isLoading"
+                class="absolute right-3 top-6 text-neutral-500 dark:text-neutral-400 p-1 transition-colors"
+                :aria-label="showPassword ? 'Hide password' : 'Show password'"
+              >
+                <EyeOff v-if="showPassword" />
+                <Eye v-else />
+              </button>
+            </div>
+          </div>
+
+          <!-- Confirm Password Input -->
+          <div>
+            <div class="relative">
+              <BaseInput
+                v-model="confirmPassword"
+                label="Confirm Password"
+                :type="showConfirmPassword ? 'text' : 'password'"
+                placeholder="Confirm your password"
+                autocomplete="new-password"
+                required
+                :disabled="isLoading"
+              />
+              <button
+                type="button"
+                @click="toggleConfirmPasswordVisibility"
+                :disabled="isLoading"
+                class="absolute right-3 top-6 text-neutral-500 dark:text-neutral-400 p-1 transition-colors"
+                :aria-label="showConfirmPassword ? 'Hide password' : 'Show password'"
+              >
+                <EyeOff v-if="showConfirmPassword" />
+                <Eye v-else />
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            :disabled="isLoading"
+            class="w-full py-2.5 rounded-md bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600"
+          >
+            <span v-if="isLoading" class="flex items-center justify-center gap-2">
+              <Loader2 class="animate-spin" />
+              Creating account...
+            </span>
+            <span v-else>Sign Up</span>
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-neutral-300 dark:border-neutral-600"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
+              Or
+            </span>
+          </div>
+        </div>
+
+        <!-- Google Sign In Button -->
+        <a
+          :href="getGoogleAuthUrl()"
+          class="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-md border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50"
+        >
+          <GoogleIcon :size="20" />
+          <span>Sign up with Google</span>
+        </a>
+
+        <!-- Sign In Link -->
+        <div class="flex items-center justify-center text-sm">
+          <span class="text-neutral-500 dark:text-neutral-400">Already have an account?</span>
+          <router-link
+            to="/login"
+            class="pl-1 text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
+          >
+            Sign in
+          </router-link>
+        </div>
+      </div>
+
+      <!-- Toast Container -->
+      <ToastContainer :toasts="toasts" :on-dismiss="removeToast" />
+    </div>
+  </div>
+</template>

@@ -20,6 +20,12 @@ export const routes = [
     displayName: 'Login',
     component: () => import('../views/LoginView.vue'),
   },
+  {
+    path: '/register',
+    name: 'register',
+    displayName: 'Register',
+    component: () => import('../views/RegisterView.vue'),
+  },
 ]
 
 const router = createRouter({
