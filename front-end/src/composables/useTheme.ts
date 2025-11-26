@@ -77,23 +77,12 @@ export function useTheme() {
     const currentDark = userOverride.value !== null ? userOverride.value : getSystemPreference()
     const newValue = !currentDark
 
-    // Set the override first
+    // Set the override - the watcher will handle updating the theme
     userOverride.value = newValue
 
     // Save to localStorage
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, String(newValue))
-    }
-
-    // Directly apply the change immediately
-    if (typeof document !== 'undefined') {
-      const html = document.documentElement
-      if (newValue) {
-        html.classList.add('dark')
-      } else {
-        html.classList.remove('dark')
-      }
-      isDark.value = newValue
     }
   }
 
