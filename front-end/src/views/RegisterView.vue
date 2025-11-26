@@ -77,128 +77,126 @@ function togglePasswordVisibility() {
 
 <template>
   <div class="min-h-full flex justify-center p-4">
-    <div class="w-full max-w-md flex flex-col gap-5">
-      <div
-        class="p-8 rounded-xl bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 flex flex-col gap-5"
-      >
-        <!-- Header -->
-        <div class="text-center">
-          <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">Sign Up</h1>
-          <p class="text-neutral-500 dark:text-neutral-400">
-            Sign up to start tracking your blood pressure
-          </p>
-        </div>
+    <div
+      class="w-full max-w-md p-8 rounded-xl bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 flex flex-col gap-5"
+    >
+      <!-- Header -->
+      <div class="text-center">
+        <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">Sign Up</h1>
+        <p class="text-neutral-500 dark:text-neutral-400">
+          Sign up to start tracking your blood pressure
+        </p>
+      </div>
 
-        <!-- Registration Form -->
-        <form @submit.prevent="handleSubmit" class="flex flex-col gap-5">
-          <!-- First Name Input -->
-          <div>
-            <BaseInput
-              v-model="firstName"
-              label="First Name"
-              type="text"
-              placeholder="Enter your first name (display name)"
-              autocomplete="given-name"
-              required
-              :disabled="isLoading"
-            />
-          </div>
-
-          <!-- Last Name Input -->
-          <div>
-            <BaseInput
-              v-model="lastName"
-              label="Last Name (Optional)"
-              type="text"
-              placeholder="Enter your last name"
-              autocomplete="family-name"
-              :disabled="isLoading"
-            />
-          </div>
-
-          <!-- Email Input -->
-          <div>
-            <BaseInput
-              v-model="email"
-              label="Email"
-              type="email"
-              placeholder="Enter your email"
-              autocomplete="email"
-              required
-              :disabled="isLoading"
-            />
-          </div>
-
-          <!-- Password Input -->
-          <div>
-            <div class="relative">
-              <BaseInput
-                v-model="password"
-                label="Password"
-                :type="showPassword ? 'text' : 'password'"
-                placeholder="Enter your password"
-                autocomplete="new-password"
-                required
-                :disabled="isLoading"
-              />
-              <button
-                type="button"
-                @click="togglePasswordVisibility"
-                :disabled="isLoading"
-                class="absolute right-3 top-6 text-neutral-500 dark:text-neutral-400 p-1 transition-colors"
-                :aria-label="showPassword ? 'Hide password' : 'Show password'"
-              >
-                <EyeOff v-if="showPassword" />
-                <Eye v-else />
-              </button>
-            </div>
-          </div>
-
-          <!-- Submit Button -->
-          <button
-            type="submit"
+      <!-- Registration Form -->
+      <form @submit.prevent="handleSubmit" class="flex flex-col gap-5">
+        <!-- First Name Input -->
+        <div>
+          <BaseInput
+            v-model="firstName"
+            label="First Name"
+            type="text"
+            placeholder="Enter first name (display name)"
+            autocomplete="given-name"
+            required
             :disabled="isLoading"
-            class="w-full py-2 rounded-md bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600"
-          >
-            <span v-if="isLoading" class="flex items-center justify-center gap-2">
-              <Loader2 class="animate-spin" />
-              Creating account...
-            </span>
-            <span v-else>Sign Up</span>
-          </button>
-        </form>
+          />
+        </div>
 
-        <!-- Divider -->
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-neutral-300 dark:border-neutral-600"></div>
-          </div>
-          <div class="relative flex justify-center text-sm">
-            <span class="px-2 bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
-              Or
-            </span>
+        <!-- Last Name Input -->
+        <div>
+          <BaseInput
+            v-model="lastName"
+            label="Last Name (Optional)"
+            type="text"
+            placeholder="Enter last name"
+            autocomplete="family-name"
+            :disabled="isLoading"
+          />
+        </div>
+
+        <!-- Email Input -->
+        <div>
+          <BaseInput
+            v-model="email"
+            label="Email"
+            type="email"
+            placeholder="Enter email"
+            autocomplete="email"
+            required
+            :disabled="isLoading"
+          />
+        </div>
+
+        <!-- Password Input -->
+        <div>
+          <div class="relative">
+            <BaseInput
+              v-model="password"
+              label="Password"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="Enter password"
+              autocomplete="new-password"
+              required
+              :disabled="isLoading"
+            />
+            <button
+              type="button"
+              @click="togglePasswordVisibility"
+              :disabled="isLoading"
+              class="absolute right-3 top-6 text-neutral-500 dark:text-neutral-400 p-1 transition-colors"
+              :aria-label="showPassword ? 'Hide password' : 'Show password'"
+            >
+              <EyeOff v-if="showPassword" />
+              <Eye v-else />
+            </button>
           </div>
         </div>
 
-        <!-- Google Sign In Button -->
-        <a
-          :href="getGoogleAuthUrl()"
-          class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-md border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50"
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          :disabled="isLoading"
+          class="w-full py-2 rounded-md bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600"
         >
-          <GoogleIcon :size="20" />
-          <span>Sign up with Google</span>
-        </a>
+          <span v-if="isLoading" class="flex items-center justify-center gap-2">
+            <Loader2 class="animate-spin" />
+            Creating account...
+          </span>
+          <span v-else>Sign Up</span>
+        </button>
+      </form>
 
-        <!-- Sign In Link -->
-        <div class="flex items-center justify-center text-sm">
-          <span class="text-neutral-500 dark:text-neutral-400">Already have an account?</span>
-          <router-link
-            to="/login"
-            class="pl-1 text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
-          >
-            Sign in
-          </router-link>
+      <!-- Divider -->
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-neutral-300 dark:border-neutral-600"></div>
         </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
+            Or
+          </span>
+        </div>
+      </div>
+
+      <!-- Google Sign In Button -->
+      <a
+        :href="getGoogleAuthUrl()"
+        class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-md border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50"
+      >
+        <GoogleIcon :size="20" />
+        <span>Sign up with Google</span>
+      </a>
+
+      <!-- Sign In Link -->
+      <div class="flex items-center justify-center text-sm">
+        <span class="text-neutral-500 dark:text-neutral-400">Already have an account?</span>
+        <router-link
+          to="/login"
+          class="pl-1 text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
+        >
+          Sign in
+        </router-link>
       </div>
     </div>
   </div>
