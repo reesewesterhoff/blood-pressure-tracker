@@ -17,3 +17,10 @@ export function getApiUrl(endpoint: string): string {
   const baseUrl = API_BASE_URL.replace(/\/$/, '')
   return `${baseUrl}${normalizedEndpoint}`
 }
+
+/**
+ * Get the Google OAuth authentication URL
+ */
+export function getGoogleAuthUrl(): string {
+  return getApiUrl('/auth/google')
+}

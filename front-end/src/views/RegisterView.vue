@@ -7,7 +7,7 @@ import ToastContainer from '@/components/toast/ToastContainer.vue'
 import GoogleIcon from '@/components/icons/GoogleIcon.vue'
 import { authApi, ApiError } from '@/services/api'
 import { useToast } from '@/composables/useToast'
-import { getApiUrl } from '@/config/api'
+import { getGoogleAuthUrl } from '@/config/api'
 
 const router = useRouter()
 const { toasts, showSuccess, showError, removeToast } = useToast()
@@ -80,10 +80,6 @@ function togglePasswordVisibility() {
 
 function toggleConfirmPasswordVisibility() {
   showConfirmPassword.value = !showConfirmPassword.value
-}
-
-function getGoogleAuthUrl(): string {
-  return getApiUrl('/auth/google')
 }
 </script>
 
