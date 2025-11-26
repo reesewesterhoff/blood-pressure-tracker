@@ -15,19 +15,17 @@ const { toasts, showSuccess, showError, removeToast } = useToast()
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-const displayName = ref('')
 const firstName = ref('')
 const lastName = ref('')
 const isLoading = ref(false)
 const showPassword = ref(false)
-const showConfirmPassword = ref(false)
 
 async function handleSubmit() {
   if (isLoading.value) return
 
   // Basic validation
-  if (!email.value || !password.value || !displayName.value) {
-    showError('Please enter email, password, and display name.')
+  if (!email.value || !password.value || !firstName.value) {
+    showError('Please enter email, password, and first name.')
     return
   }
 
@@ -42,8 +40,7 @@ async function handleSubmit() {
     await authApi.register(
       email.value,
       password.value,
-      displayName.value,
-      firstName.value || undefined,
+      firstName.value,
       lastName.value || undefined,
     )
     showSuccess('Account created successfully!')
@@ -77,51 +74,33 @@ async function handleSubmit() {
 function togglePasswordVisibility() {
   showPassword.value = !showPassword.value
 }
-
-function toggleConfirmPasswordVisibility() {
-  showConfirmPassword.value = !showConfirmPassword.value
-}
 </script>
 
 <template>
   <div class="min-h-full flex justify-center p-4">
-    <div class="w-full max-w-md flex flex-col gap-4">
+    <div class="w-full max-w-md flex flex-col gap-5">
       <div
-        class="p-8 rounded-xl bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 flex flex-col gap-4"
+        class="p-8 rounded-xl bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 flex flex-col gap-5"
       >
         <!-- Header -->
         <div class="text-center">
-          <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
-            Create Account
-          </h1>
+          <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">Sign Up</h1>
           <p class="text-neutral-500 dark:text-neutral-400">
             Sign up to start tracking your blood pressure readings
           </p>
         </div>
 
         <!-- Registration Form -->
-        <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
-          <!-- Display Name Input -->
-          <div>
-            <BaseInput
-              v-model="displayName"
-              label="Display Name"
-              type="text"
-              placeholder="Enter your display name"
-              autocomplete="name"
-              required
-              :disabled="isLoading"
-            />
-          </div>
-
+        <form @submit.prevent="handleSubmit" class="flex flex-col gap-5">
           <!-- First Name Input -->
           <div>
             <BaseInput
               v-model="firstName"
-              label="First Name (Optional)"
+              label="First Name"
               type="text"
-              placeholder="Enter your first name"
+              placeholder="Enter your first name (display name)"
               autocomplete="given-name"
+              required
               :disabled="isLoading"
             />
           </div>
@@ -176,36 +155,11 @@ function toggleConfirmPasswordVisibility() {
             </div>
           </div>
 
-          <!-- Confirm Password Input -->
-          <div>
-            <div class="relative">
-              <BaseInput
-                v-model="confirmPassword"
-                label="Confirm Password"
-                :type="showConfirmPassword ? 'text' : 'password'"
-                placeholder="Confirm your password"
-                autocomplete="new-password"
-                required
-                :disabled="isLoading"
-              />
-              <button
-                type="button"
-                @click="toggleConfirmPasswordVisibility"
-                :disabled="isLoading"
-                class="absolute right-3 top-6 text-neutral-500 dark:text-neutral-400 p-1 transition-colors"
-                :aria-label="showConfirmPassword ? 'Hide password' : 'Show password'"
-              >
-                <EyeOff v-if="showConfirmPassword" />
-                <Eye v-else />
-              </button>
-            </div>
-          </div>
-
           <!-- Submit Button -->
           <button
             type="submit"
             :disabled="isLoading"
-            class="w-full py-2.5 rounded-md bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600"
+            class="w-full py-2 rounded-md bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600"
           >
             <span v-if="isLoading" class="flex items-center justify-center gap-2">
               <Loader2 class="animate-spin" />
@@ -230,7 +184,7 @@ function toggleConfirmPasswordVisibility() {
         <!-- Google Sign In Button -->
         <a
           :href="getGoogleAuthUrl()"
-          class="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-md border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50"
+          class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-md border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50"
         >
           <GoogleIcon :size="20" />
           <span>Sign up with Google</span>

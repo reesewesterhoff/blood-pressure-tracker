@@ -61,9 +61,9 @@ function togglePasswordVisibility() {
 
 <template>
   <div class="min-h-full flex justify-center p-4">
-    <div class="w-full max-w-md flex flex-col gap-4">
+    <div class="w-full max-w-md flex flex-col gap-5">
       <div
-        class="p-8 rounded-xl bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 flex flex-col gap-4"
+        class="p-8 rounded-xl bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 flex flex-col gap-5"
       >
         <!-- Header -->
         <div class="text-center">
@@ -76,7 +76,7 @@ function togglePasswordVisibility() {
         </div>
 
         <!-- Login Form -->
-        <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
+        <form @submit.prevent="handleSubmit" class="flex flex-col gap-5">
           <!-- Email Input -->
           <div>
             <BaseInput
@@ -136,7 +136,7 @@ function togglePasswordVisibility() {
           <button
             type="submit"
             :disabled="isLoading"
-            class="w-full py-2.5 rounded-md bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600"
+            class="w-full py-2 rounded-md bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600"
           >
             <span v-if="isLoading" class="flex items-center justify-center gap-2">
               <Loader2 class="animate-spin" />
@@ -161,7 +161,7 @@ function togglePasswordVisibility() {
         <!-- Google Sign In Button -->
         <a
           :href="getGoogleAuthUrl()"
-          class="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-md border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50"
+          class="w-full flex items-center justify-center gap-3 py-2 rounded-md border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50"
         >
           <GoogleIcon :size="20" />
           <span>Sign in with Google</span>
