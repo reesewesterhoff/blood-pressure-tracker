@@ -61,12 +61,8 @@ export function configurePassport() {
 
         const newUser = {
           googleId: profile.id,
-          displayName:
-            profile.displayName ||
-            `${profile.name?.givenName} ${profile.name?.familyName}`.trim() ||
-            googleEmail ||
-            "User",
-          firstName: profile.name?.givenName,
+          firstName:
+            profile.name?.givenName || googleEmail?.split("@")[0] || "User",
           lastName: profile.name?.familyName,
           image: profile.photos?.[0].value,
           email: googleEmail, // Store email from Google
@@ -77,7 +73,8 @@ export function configurePassport() {
           if (user) {
             // User found with this Google ID
             // Optionally update user details from Google profile if they changed
-            user.displayName = newUser.displayName;
+            user.firstName = newUser.firstName || user.firstName;
+            user.lastName = newUser.lastName || user.lastName;
             user.image = newUser.image || user.image;
             if (newUser.email && !user.email) user.email = newUser.email; // Add email if missing
             await user.save();
@@ -91,11 +88,9 @@ export function configurePassport() {
               // Email exists (likely local account or different Google account linked previously)
               // Link Google ID to this existing account
               user.googleId = profile.id;
-              user.displayName = newUser.displayName || user.displayName; // Prefer Google's display name
-              user.image = newUser.image || user.image;
-              // Ensure other Google details are updated if preferred
               user.firstName = newUser.firstName || user.firstName;
               user.lastName = newUser.lastName || user.lastName;
+              user.image = newUser.image || user.image;
               await user.save();
               return done(null, user);
             }

@@ -17,12 +17,12 @@ authRoutes.post(
   "/register",
   async (req: Request, res: Response<ApiResponse>, next: NextFunction) => {
     try {
-      const { email, password, displayName, firstName, lastName } = req.body;
+      const { email, password, firstName, lastName } = req.body;
 
-      if (!email || !password || !displayName) {
+      if (!email || !password || !firstName) {
         return res.status(400).json({
           success: false,
-          message: "Please provide email, password, and display name.",
+          message: "Please provide email, password, and first name.",
         });
       }
 
@@ -55,7 +55,6 @@ authRoutes.post(
       const newUser = new User({
         email: email.toLowerCase(),
         password, // Password will be hashed by the pre-save hook in User model
-        displayName,
         firstName,
         lastName,
       });

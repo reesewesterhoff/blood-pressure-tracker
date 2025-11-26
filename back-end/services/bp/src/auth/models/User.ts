@@ -11,13 +11,9 @@ const UserSchema: Schema = new Schema(
       unique: true,
       sparse: true, // Allows multiple documents to have null/missing googleId
     },
-    displayName: {
-      // For local accounts, this could be a username or derived from email
-      type: String,
-      required: true,
-    },
     firstName: {
       type: String,
+      required: true,
     },
     lastName: {
       type: String,

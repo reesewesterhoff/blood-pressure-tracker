@@ -12,7 +12,8 @@ describe("BloodPressureReading Model", () => {
     testUser = new User({
       email: "test@example.com",
       password: "TestPassword123!",
-      displayName: "Test User",
+      firstName: "Test",
+      lastName: "User",
     });
     await testUser.save();
   });

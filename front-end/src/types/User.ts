@@ -5,8 +5,7 @@
 export interface User {
   _id: string
   googleId?: string
-  displayName: string
-  firstName?: string
+  firstName: string
   lastName?: string
   email?: string
   image?: string

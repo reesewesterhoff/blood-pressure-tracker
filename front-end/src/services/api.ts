@@ -112,13 +112,12 @@ export const authApi = {
   async register(
     email: string,
     password: string,
-    displayName: string,
-    firstName?: string,
+    firstName: string,
     lastName?: string,
   ): Promise<ApiResponse<User>> {
     return request<User>('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ email, password, displayName, firstName, lastName }),
+      body: JSON.stringify({ email, password, firstName, lastName }),
     })
   },
 
