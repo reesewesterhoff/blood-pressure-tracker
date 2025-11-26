@@ -2,6 +2,10 @@
 import { RouterView } from 'vue-router'
 import AppHeader from './components/header/AppHeader.vue'
 import AppFooter from './components/footer/AppFooter.vue'
+import ToastContainer from './components/toast/ToastContainer.vue'
+import { useToast } from './composables/useToast'
+
+const { toasts, removeToast } = useToast()
 </script>
 
 <template>
@@ -13,5 +17,11 @@ import AppFooter from './components/footer/AppFooter.vue'
       <RouterView />
     </main>
     <AppFooter />
+    <!-- Global Toast Container -->
+    <div class="fixed bottom-15 right-5 z-50 pointer-events-none max-w-md w-full px-4 sm:px-0">
+      <div class="pointer-events-auto">
+        <ToastContainer :toasts="toasts" :on-dismiss="removeToast" />
+      </div>
+    </div>
   </div>
 </template>

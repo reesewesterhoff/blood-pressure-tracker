@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import BloodPressureForm from '@/components/forms/BloodPressureForm.vue'
-import ToastContainer from '@/components/toast/ToastContainer.vue'
 import type { BloodPressureReading } from '@/types/BloodPressure'
 import { readingsApi, ApiError } from '@/services/api'
 import { useToast } from '@/composables/useToast'
 
 const isLoading = ref(false)
-const { toasts, showSuccess, showError, removeToast } = useToast()
+const { showSuccess, showError } = useToast()
 
 async function handleSubmit(reading: BloodPressureReading) {
   isLoading.value = true
@@ -41,6 +40,5 @@ async function handleSubmit(reading: BloodPressureReading) {
 <template>
   <div class="flex flex-col items-center justify-center p-4 gap-4">
     <BloodPressureForm @submit="handleSubmit" :disabled="isLoading" />
-    <ToastContainer :toasts="toasts" :on-dismiss="removeToast" />
   </div>
 </template>

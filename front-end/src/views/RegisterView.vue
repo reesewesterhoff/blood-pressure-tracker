@@ -3,14 +3,13 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Eye, EyeOff, Loader2 } from 'lucide-vue-next'
 import BaseInput from '@/components/input/BaseInput.vue'
-import ToastContainer from '@/components/toast/ToastContainer.vue'
 import GoogleIcon from '@/components/icons/GoogleIcon.vue'
 import { authApi, ApiError } from '@/services/api'
 import { useToast } from '@/composables/useToast'
 import { getGoogleAuthUrl } from '@/config/api'
 
 const router = useRouter()
-const { toasts, showSuccess, showError, removeToast } = useToast()
+const { showSuccess, showError } = useToast()
 
 const email = ref('')
 const password = ref('')
@@ -201,9 +200,6 @@ function togglePasswordVisibility() {
           </router-link>
         </div>
       </div>
-
-      <!-- Toast Container -->
-      <ToastContainer :toasts="toasts" :on-dismiss="removeToast" />
     </div>
   </div>
 </template>
