@@ -86,7 +86,7 @@ function togglePasswordVisibility() {
         <div class="text-center">
           <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">Sign Up</h1>
           <p class="text-neutral-500 dark:text-neutral-400">
-            Sign up to start tracking your blood pressure readings
+            Sign up to start tracking your blood pressure
           </p>
         </div>
 

@@ -70,9 +70,7 @@ function togglePasswordVisibility() {
           <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
             Welcome Back
           </h1>
-          <p class="text-neutral-500 dark:text-neutral-400">
-            Sign in to track your blood pressure readings
-          </p>
+          <p class="text-neutral-500 dark:text-neutral-400">Sign in to track your blood pressure</p>
         </div>
 
         <!-- Login Form -->
