@@ -81,13 +81,11 @@ export function createRateLimiter(options: RateLimitOptions) {
         // Only increment count for failed requests (4xx, 5xx)
         if (res.statusCode >= 400) {
           entry.count++;
-          console.log("entry.count (failed)", entry.count, options.message);
         }
       });
     } else {
       // Normal rate limiting: increment immediately
       entry.count++;
-      console.log("entry.count", entry.count, options.message);
 
       // Check if limit exceeded
       if (entry.count > max) {
