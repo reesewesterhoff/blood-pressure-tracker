@@ -10,22 +10,32 @@ interface RateLimitStore {
 }
 
 // Simple in-memory rate limiter (for production, consider using Redis)
-const store: RateLimitStore = {};
+// Each rate limiter instance gets its own store to avoid interference
+const stores: Map<string, RateLimitStore> = new Map();
 
 interface RateLimitOptions {
   windowMs: number; // Time window in milliseconds
   max: number; // Maximum number of requests per window
   message?: string;
   skipSuccessfulRequests?: boolean;
+  keyPrefix?: string; // Optional prefix to separate different rate limiters
 }
 
 export function createRateLimiter(options: RateLimitOptions) {
+  console.log("rate limiter hit", options);
   const {
     windowMs,
     max,
     message = "Too many requests",
     skipSuccessfulRequests = false,
+    keyPrefix = "default",
   } = options;
+
+  // Get or create store for this rate limiter instance
+  if (!stores.has(keyPrefix)) {
+    stores.set(keyPrefix, {});
+  }
+  const store = stores.get(keyPrefix)!;
 
   return (req: Request, res: Response, next: NextFunction) => {
     const key = req.ip || "unknown";
@@ -54,16 +64,39 @@ export function createRateLimiter(options: RateLimitOptions) {
       entry.resetTime = now + windowMs;
     }
 
-    // Increment count
-    entry.count++;
+    // For skipSuccessfulRequests, check limit before proceeding (only count failures)
+    // For normal rate limiting, increment and check immediately
+    if (skipSuccessfulRequests) {
+      // Check if we've already hit the limit from previous failures
+      if (entry.count >= max) {
+        return res.status(429).json({
+          success: false,
+          message,
+          retryAfter: Math.ceil((entry.resetTime - now) / 1000),
+        });
+      }
 
-    // Check if limit exceeded
-    if (entry.count > max) {
-      return res.status(429).json({
-        success: false,
-        message,
-        retryAfter: Math.ceil((entry.resetTime - now) / 1000),
+      // Track response status - only count failures
+      res.on("finish", () => {
+        // Only increment count for failed requests (4xx, 5xx)
+        if (res.statusCode >= 400) {
+          entry.count++;
+          console.log("entry.count (failed)", entry.count, options.message);
+        }
       });
+    } else {
+      // Normal rate limiting: increment immediately
+      entry.count++;
+      console.log("entry.count", entry.count, options.message);
+
+      // Check if limit exceeded
+      if (entry.count > max) {
+        return res.status(429).json({
+          success: false,
+          message,
+          retryAfter: Math.ceil((entry.resetTime - now) / 1000),
+        });
+      }
     }
 
     // Add rate limit headers
@@ -73,37 +106,38 @@ export function createRateLimiter(options: RateLimitOptions) {
       "X-RateLimit-Reset": new Date(entry.resetTime).toISOString(),
     });
 
-    // Track response status if needed
-    if (skipSuccessfulRequests) {
-      const originalSend = res.send;
-      res.send = function (data) {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          entry.count = Math.max(0, entry.count - 1);
-        }
-        return originalSend.call(this, data);
-      };
-    }
-
     next();
   };
 }
 
 // Pre-configured rate limiters
-export const authRateLimit = createRateLimiter({
+export const loginRateLimit = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // 5 failed attempts per window
   message: "Too many authentication attempts, please try again later",
   skipSuccessfulRequests: true, // Only count failed login attempts
+  keyPrefix: "login", // Separate store for login rate limiting
 });
 
 export const generalRateLimit = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 1000, // 1000 requests per window (~67/minute)
   message: "Too many requests, please try again later",
+  keyPrefix: "general", // Separate store for general rate limiting
 });
 
 export const strictRateLimit = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 100, // 100 requests per minute (for high-risk endpoints)
   message: "Rate limit exceeded, please slow down",
+  keyPrefix: "strict", // Separate store for strict rate limiting
+});
+
+// Separate rate limiter for registration (more lenient than login)
+export const registrationRateLimit = createRateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 failed attempts per window (more lenient than login)
+  message: "Too many registration attempts, please try again later",
+  skipSuccessfulRequests: true, // Only count failed registration attempts
+  keyPrefix: "registration", // Separate store for registration rate limiting
 });

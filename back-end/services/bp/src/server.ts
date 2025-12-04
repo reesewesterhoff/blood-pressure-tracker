@@ -14,7 +14,6 @@ import {
   errorHandler,
   notFoundHandler,
   generalRateLimit,
-  authRateLimit,
   sanitizeApiInput,
 } from "./shared/middleware";
 
@@ -78,7 +77,8 @@ serverApp.use(passportMain.initialize());
 serverApp.use(passportMain.session());
 
 // Define Routes with rate limiting
-serverApp.use("/auth", authRateLimit, authRoutes);
+// Note: Rate limiters are applied per-route in authRoutes.ts
+serverApp.use("/auth", authRoutes);
 serverApp.use("/api/readings", bloodPressureRoutes);
 
 serverApp.get("/", (req, res) => {

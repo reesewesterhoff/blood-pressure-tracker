@@ -3,7 +3,12 @@
 import express, { Request, Response, NextFunction } from "express";
 import passport from "passport";
 import { User } from "../models";
-import { ensureAuth, CustomError } from "../../shared/middleware";
+import {
+  ensureAuth,
+  CustomError,
+  loginRateLimit,
+  registrationRateLimit,
+} from "../../shared/middleware";
 import { validatePassword, validateEmail } from "../../shared/utils";
 import { ApiResponse } from "../../shared/types";
 
@@ -15,6 +20,7 @@ const authRoutes = express.Router();
 // @route   POST /auth/register
 authRoutes.post(
   "/register",
+  registrationRateLimit,
   async (req: Request, res: Response<ApiResponse>, next: NextFunction) => {
     try {
       const { email, password, firstName, lastName } = req.body;
@@ -85,6 +91,7 @@ authRoutes.post(
 // @route   POST /auth/login
 authRoutes.post(
   "/login",
+  loginRateLimit,
   (req: Request, res: Response<ApiResponse>, next: NextFunction) => {
     passport.authenticate(
       "local",
