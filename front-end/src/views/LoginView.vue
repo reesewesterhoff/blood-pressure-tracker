@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { Eye, EyeOff, Loader2 } from 'lucide-vue-next'
 import BaseInput from '@/components/input/BaseInput.vue'
 import GoogleIcon from '@/components/icons/GoogleIcon.vue'
 import { authApi, ApiError } from '@/services/api'
 import { useToast } from '@/composables/useToast'
+import { useAuthStore } from '@/stores/auth'
 import { getGoogleAuthUrl } from '@/config/api'
 
 const router = useRouter()
-const { showSuccess, showError } = useToast()
+const route = useRoute()
+const toast = useToast()
+const authStore = useAuthStore()
 
 const email = ref('')
 const password = ref('')
@@ -22,30 +25,37 @@ async function handleSubmit() {
 
   // Basic validation
   if (!email.value || !password.value) {
-    showError('Please enter both email and password.')
+    toast.showError('Please enter both email and password.')
     return
   }
 
   isLoading.value = true
 
   try {
-    await authApi.login(email.value, password.value)
-    showSuccess('Logged in successfully!')
-    // Redirect to home page after successful login
-    setTimeout(() => {
-      router.push('/')
-    }, 500)
+    const response = await authApi.login(email.value, password.value)
+
+    if (response.success && response.data) {
+      // Update auth store with user data
+      authStore.setUser(response.data)
+      toast.showSuccess('Logged in successfully!')
+
+      // Redirect to intended destination or home
+      const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
+      router.push(redirect)
+    } else {
+      toast.showError('Login failed. Please try again.')
+    }
   } catch (error) {
     if (error instanceof ApiError) {
       if (error.status === 401) {
-        showError('Invalid email or password. Please try again.')
+        toast.showError('Invalid email or password. Please try again.')
       } else if (error.status === 0) {
-        showError('Unable to connect to the server. Please check your connection.')
+        toast.showError('Unable to connect to the server. Please check your connection.')
       } else {
-        showError(error.message || 'Login failed. Please try again.')
+        toast.showError(error.message || 'Login failed. Please try again.')
       }
     } else {
-      showError('An unexpected error occurred. Please try again.')
+      toast.showError('An unexpected error occurred. Please try again.')
       console.error('Unexpected error:', error)
     }
   } finally {

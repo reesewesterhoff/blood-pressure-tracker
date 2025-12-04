@@ -6,14 +6,15 @@ import BaseInput from '@/components/input/BaseInput.vue'
 import GoogleIcon from '@/components/icons/GoogleIcon.vue'
 import { authApi, ApiError } from '@/services/api'
 import { useToast } from '@/composables/useToast'
+import { useAuthStore } from '@/stores/auth'
 import { getGoogleAuthUrl } from '@/config/api'
 
 const router = useRouter()
-const { showSuccess, showError } = useToast()
+const toast = useToast()
+const authStore = useAuthStore()
 
 const email = ref('')
 const password = ref('')
-const confirmPassword = ref('')
 const firstName = ref('')
 const lastName = ref('')
 const isLoading = ref(false)
@@ -24,29 +25,31 @@ async function handleSubmit() {
 
   // Basic validation
   if (!email.value || !password.value || !firstName.value) {
-    showError('Please enter email, password, and first name.')
-    return
-  }
-
-  if (password.value !== confirmPassword.value) {
-    showError('Passwords do not match. Please try again.')
+    toast.showError('Please enter email, password, and first name.')
     return
   }
 
   isLoading.value = true
 
   try {
-    await authApi.register(
+    const response = await authApi.register(
       email.value,
       password.value,
       firstName.value,
       lastName.value || undefined,
     )
-    showSuccess('Account created successfully!')
-    // Redirect to home page after successful registration
-    setTimeout(() => {
+
+    console.log('helloooooooooooo', response)
+
+    if (response.success && response.data) {
+      // Update auth store with user data
+      authStore.setUser(response.data)
+      toast.showSuccess('Account created successfully!')
+      // Redirect to home page after successful registration
       router.push('/')
-    }, 500)
+    } else {
+      toast.showError('Registration failed. Please try again.')
+    }
   } catch (error) {
     if (error instanceof ApiError) {
       if (error.status === 400) {
@@ -55,14 +58,14 @@ async function handleSubmit() {
         if (error.response?.errors && Array.isArray(error.response.errors)) {
           errorMessage = error.response.errors.join(', ')
         }
-        showError(errorMessage)
+        toast.showError(errorMessage)
       } else if (error.status === 0) {
-        showError('Unable to connect to the server. Please check your connection.')
+        toast.showError('Unable to connect to the server. Please check your connection.')
       } else {
-        showError(error.message || 'Registration failed. Please try again.')
+        toast.showError(error.message || 'Registration failed. Please try again.')
       }
     } else {
-      showError('An unexpected error occurred. Please try again.')
+      toast.showError('An unexpected error occurred. Please try again.')
       console.error('Unexpected error:', error)
     }
   } finally {
