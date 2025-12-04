@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import ThemeToggle from '../theme-toggle/ThemeToggle.vue'
 import LogoImage from '../logo-image/LogoImage.vue'
+import UserAvatar from '../avatar/UserAvatar.vue'
+
+const authStore = useAuthStore()
 </script>
 
 <template>
@@ -20,7 +24,13 @@ import LogoImage from '../logo-image/LogoImage.vue'
             </h3>
           </RouterLink>
         </div>
-        <ThemeToggle />
+        <div class="flex items-center gap-4">
+          <ThemeToggle />
+          <UserAvatar
+            v-if="authStore.isLoggedIn && authStore.currentUser"
+            :user="authStore.currentUser"
+          />
+        </div>
       </div>
     </div>
   </header>
