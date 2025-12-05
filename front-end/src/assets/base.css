@@ -133,10 +133,33 @@
   }
 }
 
+/* Box-sizing reset for all elements */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+/* Targeted margin reset for elements that have browser defaults */
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol,
+li,
+dl,
+dt,
+dd,
+blockquote,
+figure,
+fieldset,
+legend {
   margin: 0;
   font-weight: normal;
 }
