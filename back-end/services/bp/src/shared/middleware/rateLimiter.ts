@@ -22,7 +22,6 @@ interface RateLimitOptions {
 }
 
 export function createRateLimiter(options: RateLimitOptions) {
-  console.log("rate limiter hit", options);
   const {
     windowMs,
     max,
