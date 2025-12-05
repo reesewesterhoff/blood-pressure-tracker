@@ -39,8 +39,6 @@ async function handleSubmit() {
       lastName.value || undefined,
     )
 
-    console.log('helloooooooooooo', response)
-
     if (response.success && response.data) {
       // Update auth store with user data
       authStore.setUser(response.data)
@@ -147,7 +145,7 @@ function togglePasswordVisibility() {
               type="button"
               @click="togglePasswordVisibility"
               :disabled="isLoading"
-              class="absolute right-3 top-6 text-neutral-500 dark:text-neutral-400 p-1 transition-colors"
+              class="absolute right-3 top-8 text-neutral-500 dark:text-neutral-400 p-1 transition-colors"
               :aria-label="showPassword ? 'Hide password' : 'Show password'"
             >
               <EyeOff v-if="showPassword" />
