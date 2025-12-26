@@ -9,7 +9,11 @@ import {
   loginRateLimit,
   registrationRateLimit,
 } from "../../shared/middleware";
-import { validatePassword, validateEmail } from "../../shared/utils";
+import {
+  validatePassword,
+  validateEmail,
+  decodeHtmlEntities,
+} from "../../shared/utils";
 import { ApiResponse } from "../../shared/types";
 
 const authRoutes = express.Router();
@@ -140,16 +144,47 @@ authRoutes.get(
 // @route   GET /auth/google/callback
 authRoutes.get(
   "/google/callback",
+  (req: Request, res: Response, next: NextFunction) => {
+    // Decode HTML entities in query parameters
+    // Cannot have redirect URL that contains HTML-encoded characters
+    if (typeof req.query.code === "string") {
+      req.query.code = decodeHtmlEntities(req.query.code);
+    }
+    if (typeof req.query.scope === "string") {
+      req.query.scope = decodeHtmlEntities(req.query.scope);
+    }
+    if (typeof req.query.error === "string") {
+      req.query.error = decodeHtmlEntities(req.query.error);
+    }
+    if (typeof req.query.error_description === "string") {
+      req.query.error_description = decodeHtmlEntities(
+        req.query.error_description
+      );
+    }
+
+    // If Google returned an error, log it and redirect
+    if (req.query.error) {
+      console.error("Google OAuth error:", req.query.error);
+      console.error("Error description:", req.query.error_description);
+      return res.redirect(
+        `${process.env.FRONTEND_URL || "http://localhost:5173"}/login?error=${
+          req.query.error
+        }&description=${req.query.error_description || "google_auth_failed"}`
+      );
+    }
+
+    next();
+  },
   passport.authenticate("google", {
     // successRedirect: process.env.FRONTEND_URL || 'http://localhost:8080/dashboard', // We handle redirect manually
     failureRedirect: `${
-      process.env.FRONTEND_URL || "http://localhost:8080"
+      process.env.FRONTEND_URL || "http://localhost:5173"
     }/login?error=google_auth_failed`, // Redirect to frontend login on failure
     failureMessage: true,
   }),
   (req, res) => {
     // Successful authentication, redirect to frontend dashboard.
-    res.redirect(process.env.FRONTEND_URL || "http://localhost:8080/dashboard");
+    res.redirect(process.env.FRONTEND_URL || "http://localhost:5173");
   }
 );
 

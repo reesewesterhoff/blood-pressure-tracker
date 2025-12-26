@@ -9,5 +9,8 @@ export * from "./validatePassword";
 // Query parameter parsing utilities
 export * from "./parseQueryParams";
 
+// String manipulation utilities
+export * from "./stringUtils";
+
 // Password constants
 export * from "./constants";
