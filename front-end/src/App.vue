@@ -13,8 +13,8 @@ const { toasts, removeToast } = useToast()
     class="min-h-screen flex flex-col bg-neutral-100 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100"
   >
     <AppHeader />
-    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8">
-      <RouterView />
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8 flex flex-col">
+      <RouterView class="flex-1 min-h-0" />
     </main>
     <AppFooter />
     <!-- Global Toast Container -->
