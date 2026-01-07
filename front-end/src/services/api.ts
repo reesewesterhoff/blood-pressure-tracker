@@ -166,4 +166,13 @@ export const readingsApi = {
       }),
     })
   },
+
+  /**
+   * Get all blood pressure readings for the logged-in user
+   */
+  async getBloodPressureReadings(): Promise<ApiResponse<BloodPressureReading[]>> {
+    return request<BloodPressureReading[]>('/api/readings', {
+      method: 'GET',
+    })
+  },
 }
