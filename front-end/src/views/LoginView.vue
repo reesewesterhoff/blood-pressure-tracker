@@ -37,7 +37,6 @@ async function handleSubmit() {
     if (response.success && response.data) {
       // Update auth store with user data
       authStore.setUser(response.data)
-      toast.showSuccess('Logged in successfully!')
 
       // Redirect to intended destination or home
       const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
