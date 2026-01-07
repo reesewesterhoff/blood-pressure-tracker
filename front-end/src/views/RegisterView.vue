@@ -77,7 +77,7 @@ function togglePasswordVisibility() {
 </script>
 
 <template>
-  <div class="min-h-full flex justify-center p-4">
+  <div class="flex justify-center p-4">
     <div
       class="w-full max-w-md p-8 rounded-xl bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 flex flex-col gap-5"
     >

@@ -38,7 +38,7 @@ async function handleSubmit(reading: BloodPressureReading) {
 </script>
 
 <template>
-  <div class="container mx-auto p-4 h-full flex flex-col">
+  <div class="container mx-auto p-4 h-full flex flex-col flex-1 min-h-0">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto flex-1 w-full">
       <!-- Left Column: Blood Pressure Form -->
       <div class="flex justify-center">
