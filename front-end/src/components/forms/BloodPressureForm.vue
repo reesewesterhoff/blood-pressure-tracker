@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import BaseInput from '@/components/input/BaseInput.vue'
+import AverageBloodPressure from '@/components/stats/AverageBloodPressure.vue'
 import type { BloodPressureReading } from '@/types/BloodPressure'
 
 interface Props {
@@ -17,6 +18,7 @@ const emit = defineEmits<{
 
 const systolic = ref('')
 const diastolic = ref('')
+const averageStatsRef = ref<InstanceType<typeof AverageBloodPressure> | null>(null)
 
 function handleSubmit() {
   if (props.disabled) {
@@ -38,12 +40,21 @@ function handleSubmit() {
   systolic.value = ''
   diastolic.value = ''
 }
+
+function refreshStats() {
+  averageStatsRef.value?.refresh()
+}
+
+// Expose refreshStats so parent can refresh stats after successful submission
+defineExpose({
+  refreshStats,
+})
 </script>
 
 <template>
-  <div class="flex justify-center h-full">
+  <div class="flex justify-center md:h-full w-full">
     <form
-      class="w-full max-w-xl p-10 rounded-xl bg-white dark:bg-neutral-800 shadow-lg flex flex-col gap-6 h-full"
+      class="w-full max-w-xl p-10 rounded-xl bg-white dark:bg-neutral-800 shadow-lg flex flex-col gap-6 md:h-full"
       @submit.prevent="handleSubmit"
     >
       <h2 class="text-2xl text-center text-neutral-900 dark:text-neutral-100">
@@ -84,6 +95,8 @@ function handleSubmit() {
       >
         {{ disabled ? 'Submitting...' : 'Submit Reading' }}
       </button>
+
+      <AverageBloodPressure ref="averageStatsRef" />
     </form>
   </div>
 </template>
