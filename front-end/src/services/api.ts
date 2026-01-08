@@ -6,7 +6,7 @@
  */
 
 import { getApiUrl } from '@/config/api'
-import type { BloodPressureReading } from '@/types/BloodPressure'
+import type { BloodPressureReading, BloodPressureStats } from '@/types/BloodPressure'
 import type { User } from '@/types/User'
 
 /**
@@ -172,6 +172,15 @@ export const readingsApi = {
    */
   async getBloodPressureReadings(): Promise<ApiResponse<BloodPressureReading[]>> {
     return request<BloodPressureReading[]>('/api/readings', {
+      method: 'GET',
+    })
+  },
+
+  /**
+   * Get average blood pressure statistics for the logged-in user
+   */
+  async getAverageBloodPressure(): Promise<ApiResponse<BloodPressureStats>> {
+    return request<BloodPressureStats>('/api/readings/average', {
       method: 'GET',
     })
   },

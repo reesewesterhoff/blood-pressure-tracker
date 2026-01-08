@@ -5,3 +5,13 @@ export interface BloodPressureReading {
   recordedAt?: string | Date
   isHealthy?: boolean
 }
+
+export interface BloodPressureStats {
+  averageSystolic: number
+  averageDiastolic: number
+  count: number
+  minSystolic: number
+  maxSystolic: number
+  minDiastolic: number
+  maxDiastolic: number
+}
