@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import LoadingSpinner from '@/components/spinner/LoadingSpinner.vue'
-import BloodPressureStatusChip from '@/components/chips/BloodPressureStatusChip.vue'
+import BloodPressureHistoryItem from './BloodPressureHistoryItem.vue'
 import type { BloodPressureReading } from '@/types/BloodPressure'
 
 interface Props {
@@ -12,12 +12,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   isLoading: false,
 })
-
-function formatDate(date: string | Date | undefined): string {
-  if (!date) return ''
-  const dateObj = typeof date === 'string' ? new Date(date) : date
-  return dateObj.toLocaleDateString()
-}
 
 const hasReadings = computed(() => props.readings.length > 0)
 </script>
@@ -37,28 +31,12 @@ const hasReadings = computed(() => props.readings.length > 0)
         </div>
 
         <!-- Reading items -->
-        <div
+        <BloodPressureHistoryItem
           v-else-if="hasReadings"
           v-for="reading in readings"
           :key="reading._id"
-          class="p-2.5 rounded-lg bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 shrink-0"
-        >
-          <div class="grid grid-cols-3 gap-2 items-center">
-            <div class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-              {{ reading.systolic }}/{{ reading.diastolic }}
-            </div>
-            <div class="text-sm text-neutral-500 dark:text-neutral-300 text-center">
-              {{ formatDate(reading.recordedAt) }}
-            </div>
-            <div class="flex justify-end">
-              <BloodPressureStatusChip
-                :systolic="reading.systolic"
-                :diastolic="reading.diastolic"
-                size="sm"
-              />
-            </div>
-          </div>
-        </div>
+          :reading="reading"
+        />
 
         <!-- Empty state -->
         <div
