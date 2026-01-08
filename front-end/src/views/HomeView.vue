@@ -9,6 +9,7 @@ import { useToast } from '@/composables/useToast'
 const isLoading = ref(false)
 const isLoadingHistory = ref(false)
 const readings = ref<BloodPressureReading[]>([])
+const formRef = ref<InstanceType<typeof BloodPressureForm> | null>(null)
 const { showSuccess, showError } = useToast()
 
 async function loadReadings() {
@@ -47,6 +48,8 @@ async function handleSubmit(reading: BloodPressureReading) {
     showSuccess('Blood pressure reading saved successfully!')
     // Reload readings to show the new one
     await loadReadings()
+    // Refresh average stats
+    formRef.value?.refreshStats()
   } catch (error) {
     if (error instanceof ApiError) {
       // Handle API-specific errors
@@ -71,10 +74,12 @@ async function handleSubmit(reading: BloodPressureReading) {
 </script>
 
 <template>
-  <div class="container mx-auto p-4 h-full flex flex-col flex-1 min-h-0">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto flex-1 w-full">
+  <div class="container p-4 md:h-full flex flex-col min-h-0 md:overflow-hidden mx-auto">
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto md:flex-1 w-full md:min-h-0 md:overflow-hidden"
+    >
       <!-- Left Column: Blood Pressure Form -->
-      <BloodPressureForm @submit="handleSubmit" :disabled="isLoading" />
+      <BloodPressureForm ref="formRef" @submit="handleSubmit" :disabled="isLoading" />
 
       <!-- Right Column: History Section -->
       <BloodPressureHistory :readings="readings" :is-loading="isLoadingHistory" />
