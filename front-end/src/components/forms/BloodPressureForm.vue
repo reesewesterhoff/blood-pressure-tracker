@@ -46,9 +46,9 @@ function handleSubmit() {
       class="w-full max-w-xl p-10 rounded-xl bg-white dark:bg-neutral-800 shadow-lg flex flex-col gap-6 h-full"
       @submit.prevent="handleSubmit"
     >
-      <h1 class="text-2xl text-center text-neutral-900 dark:text-neutral-100">
+      <h2 class="text-2xl text-center text-neutral-900 dark:text-neutral-100">
         Log Blood Pressure
-      </h1>
+      </h2>
       <div class="space-y-3">
         <BaseInput
           v-model="systolic"
@@ -77,7 +77,6 @@ function handleSubmit() {
           Diastolic is the bottom number in your reading.
         </p>
       </div>
-      <div class="flex-1"></div>
       <button
         type="submit"
         :disabled="disabled"
