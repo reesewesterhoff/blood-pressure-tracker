@@ -17,14 +17,14 @@ const hasReadings = computed(() => props.readings.length > 0)
 </script>
 
 <template>
-  <div class="flex justify-center h-full">
+  <div class="flex justify-center md:h-full w-full md:min-h-0 md:overflow-hidden">
     <div
-      class="w-full max-w-xl p-10 rounded-xl bg-white dark:bg-neutral-800 shadow-lg flex flex-col gap-6 h-full"
+      class="w-full max-w-xl p-10 rounded-xl bg-white dark:bg-neutral-800 shadow-lg flex flex-col gap-6 md:h-full md:min-h-0"
     >
       <h2 class="text-2xl text-center text-neutral-900 dark:text-neutral-100">
         Blood Pressure History
       </h2>
-      <div class="flex-1 space-y-2.5 overflow-y-auto min-h-0">
+      <div class="md:flex-1 space-y-2.5 md:overflow-y-auto md:min-h-0 md:overscroll-contain">
         <!-- Loading state -->
         <div v-if="isLoading" class="flex justify-center items-center py-6">
           <LoadingSpinner size="lg" />
