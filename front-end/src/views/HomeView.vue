@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import BloodPressureForm from '@/components/forms/BloodPressureForm.vue'
 import BloodPressureHistory from '@/components/history/BloodPressureHistory.vue'
+import BackToTopButton from '@/components/back-to-top/BackToTopButton.vue'
 import type { BloodPressureReading } from '@/types/BloodPressure'
 import { readingsApi, ApiError } from '@/services/api'
 import { useToast } from '@/composables/useToast'
@@ -84,5 +85,7 @@ async function handleSubmit(reading: BloodPressureReading) {
       <!-- Right Column: History Section -->
       <BloodPressureHistory :readings="readings" :is-loading="isLoadingHistory" />
     </div>
+    <!-- Back to Top Button (mobile only) -->
+    <BackToTopButton />
   </div>
 </template>
