@@ -14,7 +14,7 @@ const { toasts, removeToast } = useToast()
   >
     <AppHeader />
     <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8 flex flex-col min-h-0">
-      <RouterView class="flex-1 min-h-0 flex flex-col w-full" />
+      <RouterView class="flex-1 min-h-0 flex flex-col items-center w-full" />
     </main>
     <AppFooter />
     <!-- Global Toast Container -->
