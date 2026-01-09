@@ -52,7 +52,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="flex justify-center md:h-full w-full">
+  <div class="flex justify-center">
     <form
       class="w-full max-w-xl p-10 rounded-xl bg-white dark:bg-neutral-800 shadow-lg flex flex-col gap-6 md:h-full"
       @submit.prevent="handleSubmit"

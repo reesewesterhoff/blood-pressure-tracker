@@ -74,9 +74,9 @@ async function handleSubmit(reading: BloodPressureReading) {
 </script>
 
 <template>
-  <div class="container p-4 md:h-full flex flex-col min-h-0 md:overflow-hidden mx-auto">
+  <div class="container p-4 md:h-full flex flex-col min-h-0 mx-auto md:pb-4">
     <div
-      class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto md:flex-1 w-full md:min-h-0 md:overflow-hidden"
+      class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto md:flex-1 w-full md:min-h-0"
     >
       <!-- Left Column: Blood Pressure Form -->
       <BloodPressureForm ref="formRef" @submit="handleSubmit" :disabled="isLoading" />
