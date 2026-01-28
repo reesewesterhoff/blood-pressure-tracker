@@ -1,5 +1,5 @@
 {
-  "name": "bp-tracker-back-end",
+  "name": "bp-tracker-backend",
   "version": "1.0.0",
   "main": "dist/server.js",
   "scripts": {
