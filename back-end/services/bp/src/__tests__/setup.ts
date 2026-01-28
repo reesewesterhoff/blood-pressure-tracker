@@ -7,7 +7,12 @@ beforeAll(async () => {
   const mongoUri =
     process.env.MONGO_TEST_URI ||
     "mongodb://localhost:27017/blood_pressure_tracker_test";
-  await mongoose.connect(mongoUri);
+  await mongoose.connect(mongoUri, {
+    maxPoolSize: 5,
+    minPoolSize: 0,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+  });
 });
 
 // Clean up after each test
@@ -33,4 +38,3 @@ global.console = {
   warn: jest.fn(),
   error: jest.fn(),
 };
-
