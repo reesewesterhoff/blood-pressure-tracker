@@ -171,13 +171,13 @@ function togglePasswordVisibility() {
       </a>
 
       <!-- Forgot Password and Sign Up Links -->
-      <div class="flex items-center justify-between text-sm">
-        <router-link
+      <div class="flex items-center justify-center text-sm">
+        <!-- <router-link
           to="/forgot-password"
           class="text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
         >
           Forgot password?
-        </router-link>
+        </router-link> -->
         <router-link
           to="/register"
           class="text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
