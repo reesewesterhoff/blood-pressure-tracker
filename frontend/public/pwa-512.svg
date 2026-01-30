@@ -6,20 +6,11 @@
   />
   <text
     x="256"
-    y="254"
+    y="292"
     text-anchor="middle"
-    font-size="128"
+    font-size="152"
     font-family="Arial, Helvetica, sans-serif"
     fill="#ffffff"
     font-weight="700"
-  >BP</text>
-  <text
-    x="256"
-    y="340"
-    text-anchor="middle"
-    font-size="72"
-    font-family="Arial, Helvetica, sans-serif"
-    fill="#ffffff"
-    font-weight="700"
-  >Tracker</text>
+  >BPT</text>
 </svg>
