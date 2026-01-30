@@ -2,6 +2,7 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { registerSW } from 'virtual:pwa-register'
 
 import App from './App.vue'
 import router from './router'
@@ -11,6 +12,8 @@ import { useAuthStore } from './stores/auth'
 // Initialize theme before mounting
 // This ensures the dark class is applied immediately and prevents flash
 initTheme()
+
+registerSW({ immediate: true })
 
 const app = createApp(App)
 const pinia = createPinia()

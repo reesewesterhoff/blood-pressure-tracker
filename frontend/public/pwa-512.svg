@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Blood Pressure Tracker">
+  <rect width="512" height="512" rx="96" fill="#f2f2f2"/>
+  <path
+    d="M256 442s-132-86-182-160C31 221 45 138 121 104c49-22 105-8 135 31 30-39 86-53 135-31 76 34 90 117 48 178-50 74-183 160-183 160z"
+    fill="#e4574f"
+  />
+  <text
+    x="256"
+    y="254"
+    text-anchor="middle"
+    font-size="128"
+    font-family="Arial, Helvetica, sans-serif"
+    fill="#ffffff"
+    font-weight="700"
+  >BP</text>
+  <text
+    x="256"
+    y="340"
+    text-anchor="middle"
+    font-size="72"
+    font-family="Arial, Helvetica, sans-serif"
+    fill="#ffffff"
+    font-weight="700"
+  >Tracker</text>
+</svg>
