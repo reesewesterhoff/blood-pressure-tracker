@@ -26,10 +26,16 @@ dotenvConfig.config();
 
 // Validate environment configuration
 const envConfig = loadEnvironmentConfig();
+const isProduction = process.env.NODE_ENV === "production";
 
 const startServer = async () => {
   // Initialize Express app
   const serverApp = expressApp();
+
+  if (isProduction) {
+    // Ensure secure cookies work behind a proxy (Nginx)
+    serverApp.set("trust proxy", 1);
+  }
 
   // Connect to MongoDB
   await connectDB();
@@ -70,8 +76,9 @@ const startServer = async () => {
         client: mongoose.connection.getClient(),
       }),
       cookie: {
-        secure: process.env.NODE_ENV === "production", // true in production
+        secure: isProduction, // required for SameSite=None
         httpOnly: true,
+        sameSite: isProduction ? "none" : "lax",
         maxAge: 1000 * 60 * 60 * 24, // 24 hours
       },
     }),
