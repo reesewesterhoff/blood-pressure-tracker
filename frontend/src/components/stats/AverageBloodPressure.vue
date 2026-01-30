@@ -46,11 +46,11 @@ defineExpose({
 
 <template>
   <div
-    class="w-full p-6 rounded-xl bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 shadow-lg flex flex-col gap-4"
+    class="w-full p-6 mt-4 rounded-xl bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 shadow-lg flex flex-col gap-4"
   >
-    <h2 class="text-2xl text-center text-neutral-900 dark:text-neutral-100">
+    <h3 class="text-2xl text-center text-neutral-900 dark:text-neutral-100">
       Average Blood Pressure
-    </h2>
+    </h3>
 
     <!-- Loading state -->
     <div v-if="isLoading" class="flex justify-center items-center py-8">
@@ -67,7 +67,7 @@ defineExpose({
       <div class="flex items-center gap-4">
         <div class="flex-1">
           <div class="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Average</div>
-          <div class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+          <div class="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
             {{ stats.averageSystolic }}/{{ stats.averageDiastolic }}
           </div>
         </div>
@@ -87,7 +87,7 @@ defineExpose({
             {{ stats.minSystolic }} - {{ stats.maxSystolic }}
           </div>
         </div>
-        <div>
+        <div class="text-right">
           <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Diastolic Range</div>
           <div class="text-sm font-medium text-neutral-900 dark:text-neutral-100">
             {{ stats.minDiastolic }} - {{ stats.maxDiastolic }}
