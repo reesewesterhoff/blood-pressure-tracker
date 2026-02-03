@@ -43,8 +43,8 @@ async function handleSubmit() {
       // Update auth store with user data
       authStore.setUser(response.data)
       toast.showSuccess('Account created successfully!')
-      // Redirect to home page after successful registration
-      router.push('/')
+      // Redirect to app page after successful registration
+      router.push('/app')
     } else {
       toast.showError('Registration failed. Please try again.')
     }
