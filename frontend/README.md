@@ -68,3 +68,9 @@ npm run test:e2e
 ```sh
 npm run lint
 ```
+
+## SEO and indexing
+
+- Confirm `public/robots.txt` is deployed and reachable at `/robots.txt`.
+- Verify the domain in Google Search Console and submit the sitemap URL.
+- Request indexing for the landing page once the domain is verified.

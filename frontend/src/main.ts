@@ -5,6 +5,7 @@ import { createPinia } from 'pinia'
 import { registerSW } from 'virtual:pwa-register'
 
 import App from './App.vue'
+import { head } from './head'
 import router from './router'
 import { initTheme } from './composables/useTheme'
 import { useAuthStore } from './stores/auth'
@@ -20,6 +21,7 @@ const pinia = createPinia()
 
 app.use(pinia)
 app.use(router)
+app.use(head)
 
 // Initialize authentication check before mounting
 // This ensures we know the auth state before the router guards run
