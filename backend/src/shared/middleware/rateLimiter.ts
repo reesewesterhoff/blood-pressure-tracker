@@ -1,17 +1,28 @@
-// Description: Rate limiting middleware to prevent abuse
+// Description: Rate limiting middleware using Upstash Redis
 
 import { Request, Response, NextFunction } from "express";
+import { Redis } from "@upstash/redis";
 
-interface RateLimitStore {
-  [key: string]: {
-    count: number;
-    resetTime: number;
-  };
+// Initialize Upstash Redis client
+// Environment variables are loaded via dotenv import in server.ts before this module loads
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+// Verify Redis connection on startup
+async function verifyRedisConnection(): Promise<void> {
+  try {
+    await redis.ping();
+    console.log("Upstash Redis connected");
+  } catch (error) {
+    console.error("Upstash Redis connection error:", error);
+    // Don't exit - rate limiting will fail open and log errors per-request
+  }
 }
 
-// Simple in-memory rate limiter (for production, consider using Redis)
-// Each rate limiter instance gets its own store to avoid interference
-const stores: Map<string, RateLimitStore> = new Map();
+// Run verification (non-blocking)
+verifyRedisConnection();
 
 interface RateLimitOptions {
   windowMs: number; // Time window in milliseconds
@@ -21,6 +32,9 @@ interface RateLimitOptions {
   keyPrefix?: string; // Optional prefix to separate different rate limiters
 }
 
+/**
+ * Creates a rate limiter middleware using Upstash Redis
+ */
 export function createRateLimiter(options: RateLimitOptions) {
   const {
     windowMs,
@@ -30,80 +44,86 @@ export function createRateLimiter(options: RateLimitOptions) {
     keyPrefix = "default",
   } = options;
 
-  // Get or create store for this rate limiter instance
-  if (!stores.has(keyPrefix)) {
-    stores.set(keyPrefix, {});
-  }
-  const store = stores.get(keyPrefix)!;
+  const windowSeconds = Math.ceil(windowMs / 1000);
 
-  return (req: Request, res: Response, next: NextFunction) => {
-    const key = req.ip || "unknown";
-    const now = Date.now();
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const ip = req.ip || "unknown";
+    const key = `ratelimit:${keyPrefix}:${ip}`;
 
-    // Clean up expired entries
-    Object.keys(store).forEach((ip) => {
-      if (store[ip].resetTime < now) {
-        delete store[ip];
-      }
-    });
+    try {
+      if (skipSuccessfulRequests) {
+        // For skipSuccessfulRequests: check current count, only increment on failure
+        const currentCount = (await redis.get<number>(key)) || 0;
 
-    // Get or create entry for this IP
-    if (!store[key]) {
-      store[key] = {
-        count: 0,
-        resetTime: now + windowMs,
-      };
-    }
-
-    const entry = store[key];
-
-    // Check if window has expired
-    if (now > entry.resetTime) {
-      entry.count = 0;
-      entry.resetTime = now + windowMs;
-    }
-
-    // For skipSuccessfulRequests, check limit before proceeding (only count failures)
-    // For normal rate limiting, increment and check immediately
-    if (skipSuccessfulRequests) {
-      // Check if we've already hit the limit from previous failures
-      if (entry.count >= max) {
-        return res.status(429).json({
-          success: false,
-          message,
-          retryAfter: Math.ceil((entry.resetTime - now) / 1000),
-        });
-      }
-
-      // Track response status - only count failures
-      res.on("finish", () => {
-        // Only increment count for failed requests (4xx, 5xx)
-        if (res.statusCode >= 400) {
-          entry.count++;
+        if (currentCount >= max) {
+          const ttl = await redis.ttl(key);
+          return res.status(429).json({
+            success: false,
+            message,
+            retryAfter: ttl > 0 ? ttl : windowSeconds,
+          });
         }
-      });
-    } else {
-      // Normal rate limiting: increment immediately
-      entry.count++;
 
-      // Check if limit exceeded
-      if (entry.count > max) {
-        return res.status(429).json({
-          success: false,
-          message,
-          retryAfter: Math.ceil((entry.resetTime - now) / 1000),
+        // Set rate limit headers based on current count
+        res.set({
+          "X-RateLimit-Limit": max.toString(),
+          "X-RateLimit-Remaining": Math.max(0, max - currentCount).toString(),
+          "X-RateLimit-Reset": new Date(
+            Date.now() + windowSeconds * 1000
+          ).toISOString(),
         });
+
+        // Track response status - only count failures
+        res.on("finish", async () => {
+          if (res.statusCode >= 400) {
+            try {
+              const newCount = await redis.incr(key);
+              // Set expiry only on first increment
+              if (newCount === 1) {
+                await redis.expire(key, windowSeconds);
+              }
+            } catch (error) {
+              console.error("Failed to increment rate limit counter:", error);
+            }
+          }
+        });
+      } else {
+        // Normal rate limiting: increment immediately using atomic INCR
+        const currentCount = await redis.incr(key);
+
+        // Set expiry on first request in window
+        if (currentCount === 1) {
+          await redis.expire(key, windowSeconds);
+        }
+
+        // Get TTL for headers
+        const ttl = await redis.ttl(key);
+
+        // Set rate limit headers
+        res.set({
+          "X-RateLimit-Limit": max.toString(),
+          "X-RateLimit-Remaining": Math.max(0, max - currentCount).toString(),
+          "X-RateLimit-Reset": new Date(
+            Date.now() + (ttl > 0 ? ttl : windowSeconds) * 1000
+          ).toISOString(),
+        });
+
+        // Check if limit exceeded
+        if (currentCount > max) {
+          return res.status(429).json({
+            success: false,
+            message,
+            retryAfter: ttl > 0 ? ttl : windowSeconds,
+          });
+        }
       }
+
+      next();
+    } catch (error) {
+      // On Redis error, log and allow the request (fail open)
+      console.error("Rate limiter Redis error:", error);
+      next();
     }
-
-    // Add rate limit headers
-    res.set({
-      "X-RateLimit-Limit": max.toString(),
-      "X-RateLimit-Remaining": Math.max(0, max - entry.count).toString(),
-      "X-RateLimit-Reset": new Date(entry.resetTime).toISOString(),
-    });
-
-    next();
   };
 }
 
@@ -113,21 +133,21 @@ export const loginRateLimit = createRateLimiter({
   max: 5, // 5 failed attempts per window
   message: "Too many authentication attempts, please try again later",
   skipSuccessfulRequests: true, // Only count failed login attempts
-  keyPrefix: "login", // Separate store for login rate limiting
+  keyPrefix: "login",
 });
 
 export const generalRateLimit = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 1000, // 1000 requests per window (~67/minute)
   message: "Too many requests, please try again later",
-  keyPrefix: "general", // Separate store for general rate limiting
+  keyPrefix: "general",
 });
 
 export const strictRateLimit = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 100, // 100 requests per minute (for high-risk endpoints)
   message: "Rate limit exceeded, please slow down",
-  keyPrefix: "strict", // Separate store for strict rate limiting
+  keyPrefix: "strict",
 });
 
 // Separate rate limiter for registration (more lenient than login)
@@ -136,5 +156,5 @@ export const registrationRateLimit = createRateLimiter({
   max: 10, // 10 failed attempts per window (more lenient than login)
   message: "Too many registration attempts, please try again later",
   skipSuccessfulRequests: true, // Only count failed registration attempts
-  keyPrefix: "registration", // Separate store for registration rate limiting
+  keyPrefix: "registration",
 });

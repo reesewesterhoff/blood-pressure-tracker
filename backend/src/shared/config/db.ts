@@ -6,7 +6,7 @@ const DEFAULT_MIN_POOL_SIZE = 0;
 
 export const parsePoolSize = (
   value: string | undefined,
-  fallback: number,
+  fallback: number
 ): number => {
   if (!value) {
     return fallback;
@@ -21,11 +21,11 @@ export const connectDB = async () => {
     const mongoURI = process.env.MONGO_URI || DEFAULT_MONGO_URI;
     const maxPoolSize = parsePoolSize(
       process.env.MONGO_MAX_POOL_SIZE,
-      DEFAULT_MAX_POOL_SIZE,
+      DEFAULT_MAX_POOL_SIZE
     );
     const minPoolSize = parsePoolSize(
       process.env.MONGO_MIN_POOL_SIZE,
-      DEFAULT_MIN_POOL_SIZE,
+      DEFAULT_MIN_POOL_SIZE
     );
 
     // The session store reuses this same Mongoose client (see server.ts).
@@ -35,7 +35,7 @@ export const connectDB = async () => {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });
-    console.log("MongoDB Connected!");
+    console.log("MongoDB connected");
   } catch (err) {
     if (err instanceof Error) {
       console.error(err.message);
