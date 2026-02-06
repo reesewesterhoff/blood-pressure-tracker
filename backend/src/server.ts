@@ -1,5 +1,7 @@
+// Load environment variables FIRST (before any other imports that might use them)
+import "./shared/config/dotenv";
+
 import expressApp from "express";
-import dotenvConfig from "dotenv";
 import corsMiddleware from "cors";
 import expressSession from "express-session";
 import connectMongoSession from "connect-mongo";
@@ -20,9 +22,6 @@ import {
 
 import { authRoutes } from "./auth/routes";
 import { bloodPressureRoutes } from "./readings/routes";
-
-// Load environment variables
-dotenvConfig.config();
 
 // Validate environment configuration
 const envConfig = loadEnvironmentConfig();
