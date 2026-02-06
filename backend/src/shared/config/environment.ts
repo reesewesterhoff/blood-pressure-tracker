@@ -15,6 +15,8 @@ function validateEnvironment(): ValidationResult {
     "SESSION_SECRET",
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
+    "UPSTASH_REDIS_REST_URL",
+    "UPSTASH_REDIS_REST_TOKEN",
   ];
 
   // Check required environment variables
@@ -56,6 +58,8 @@ function validateEnvironment(): ValidationResult {
     FRONTEND_URL: process.env.FRONTEND_URL || "http://localhost:8080",
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID!,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET!,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL!,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN!,
   };
 
   return { isValid: true, errors: [], config };
