@@ -21,7 +21,7 @@ export default defineConfig({
     tailwind(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'pwa-192.svg', 'pwa-512.svg', 'pwa-maskable.svg'],
+      includeAssets: ['favicon.ico', 'pwa-192.png', 'pwa-512.png', 'pwa-maskable.png'],
       manifest,
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
