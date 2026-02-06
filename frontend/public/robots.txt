@@ -4,4 +4,4 @@ Disallow: /app
 Disallow: /history
 Disallow: /login
 Disallow: /register
-Sitemap: /sitemap.xml
+Sitemap: https://bptracker.net/sitemap.xml
