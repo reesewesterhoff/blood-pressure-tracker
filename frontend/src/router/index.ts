@@ -60,7 +60,7 @@ export const routes = [
         meta: {
           title: 'Blood Pressure Tracker | Track readings over time',
           description:
-            'A simple blood pressure tracker with trend insights, history, and secure access from any device.',
+            'A simple blood pressure tracker with history tracking and secure access from any device.',
           redirectIfAuth: true,
         },
       },
@@ -77,21 +77,8 @@ export const routes = [
         component: HomeView,
         meta: {
           requiresAuth: true,
-          title: 'Your Dashboard | Blood Pressure Tracker',
-          description:
-            'View recent readings, add new entries, and keep your blood pressure history organized.',
-          robots: 'noindex, nofollow',
-        },
-      },
-      {
-        path: 'history',
-        name: 'history',
-        displayName: 'History',
-        component: () => import('../views/HistoryView.vue'),
-        meta: {
-          requiresAuth: true,
-          title: 'Reading History | Blood Pressure Tracker',
-          description: 'Review trends and compare blood pressure readings over time.',
+          title: 'Dashboard | Blood Pressure Tracker',
+          description: 'View historical blood pressure readings and add new entries.',
           robots: 'noindex, nofollow',
         },
       },
