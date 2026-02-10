@@ -1,21 +1,26 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { Download } from 'lucide-vue-next'
+import SubSection from '@/components/sections/SubSection.vue'
+import DownloadModal from '@/components/modal/DownloadModal.vue'
+
+const showDownloadModal = ref(false)
 
 const siteUrl = import.meta.env.VITE_APP_URL || window.location.origin
 
 const highlights = [
   {
     title: 'Track readings in seconds',
-    description: 'Log systolic, diastolic, and notes quickly from any device.',
+    description: 'Log blood pressure quickly from any device.',
   },
   {
     title: 'See trends at a glance',
-    description: 'Review history and spot patterns with an organized timeline.',
+    description: 'Review history and spot patterns.',
   },
   {
     title: 'Private by design',
-    description: 'Your data stays secure behind authenticated access.',
+    description: 'Your data is secure behind authenticated access.',
   },
 ]
 
@@ -63,14 +68,22 @@ const structuredData = computed(() =>
           </RouterLink>
           <RouterLink
             to="/login"
-            class="px-5 py-3 rounded-md border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-200 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+            class="px-5 py-3 rounded-md border border-primary-300 dark:border-primary-600 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/40 hover:border-primary-400 dark:hover:border-primary-500 transition-colors font-semibold"
           >
             Sign in
           </RouterLink>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 px-5 py-3 rounded-md border border-primary-300 dark:border-primary-600 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/40 hover:border-primary-400 dark:hover:border-primary-500 transition-colors font-semibold"
+            @click="showDownloadModal = true"
+          >
+            <Download class="size-4" />
+            Download the app
+          </button>
         </div>
         <div class="flex flex-col gap-2 text-sm text-neutral-500 dark:text-neutral-400">
-          <span>No credit card required.</span>
-          <span>Available on desktop and mobile.</span>
+          <span class="text-md font-semibold tracking-wide">100% free!</span>
+          <span class="text-md font-semibold tracking-wide">Available on desktop and mobile.</span>
         </div>
       </div>
 
@@ -87,43 +100,25 @@ const structuredData = computed(() =>
           </p>
         </div>
         <div class="flex flex-col gap-3">
-          <div
+          <SubSection
             v-for="highlight in highlights"
             :key="highlight.title"
-            class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-4"
-          >
-            <h3 class="font-semibold text-neutral-900 dark:text-neutral-100">
-              {{ highlight.title }}
-            </h3>
-            <p class="text-sm text-neutral-600 dark:text-neutral-300">
-              {{ highlight.description }}
-            </p>
-          </div>
+            :title="highlight.title"
+            :description="highlight.description"
+          />
         </div>
       </div>
     </div>
 
     <div class="grid gap-5 md:grid-cols-2">
-      <div
-        class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-6"
-      >
-        <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-          Create an account
-        </h3>
-        <p class="text-sm text-neutral-600 dark:text-neutral-300">
-          Sign up in seconds and keep your readings private to your account.
-        </p>
-      </div>
-      <div
-        class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-6"
-      >
-        <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-          Review your history
-        </h3>
-        <p class="text-sm text-neutral-600 dark:text-neutral-300">
-          Spot trends and share your progress with your healthcare provider.
-        </p>
-      </div>
+      <SubSection
+        title="Create an account"
+        description="Sign up in seconds and keep your readings private to your account."
+      />
+      <SubSection
+        title="Review your history"
+        description="Spot trends and share your progress with your healthcare provider."
+      />
     </div>
 
     <div
@@ -142,5 +137,7 @@ const structuredData = computed(() =>
         Create your account
       </RouterLink>
     </div>
+
+    <DownloadModal :open="showDownloadModal" @close="showDownloadModal = false" />
   </section>
 </template>
