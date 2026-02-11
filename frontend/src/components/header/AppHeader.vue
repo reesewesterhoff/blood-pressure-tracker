@@ -15,7 +15,7 @@ const authStore = useAuthStore()
     <div class="w-full px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <div class="flex items-center gap-8">
-          <RouterLink to="/" class="flex items-center gap-4">
+          <RouterLink to="/" class="flex items-center gap-2">
             <LogoImage />
             <h3
               class="text-neutral-900 dark:text-neutral-100 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
