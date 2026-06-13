@@ -46,7 +46,7 @@ defineExpose({
 
 <template>
   <div
-    class="w-full p-6 mt-4 rounded-xl bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 shadow-lg flex flex-col gap-4"
+    class="w-full p-4 mt-auto rounded-xl bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 shadow-lg flex flex-col gap-4"
   >
     <h3 class="text-2xl text-center text-neutral-900 dark:text-neutral-100">
       Average Blood Pressure
