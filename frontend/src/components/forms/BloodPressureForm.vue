@@ -52,9 +52,9 @@ defineExpose({
 </script>
 
 <template>
-  <div class="flex justify-center">
+  <div class="flex justify-center md:min-h-0">
     <form
-      class="w-full max-w-xl p-10 rounded-xl bg-white dark:bg-neutral-800 shadow-lg flex flex-col gap-6 md:h-full"
+      class="w-full max-w-xl p-6 rounded-xl bg-white dark:bg-neutral-800 shadow-lg flex flex-col gap-6 md:h-full md:overflow-y-auto"
       @submit.prevent="handleSubmit"
     >
       <h2 class="text-2xl text-center text-neutral-900 dark:text-neutral-100">
@@ -68,11 +68,7 @@ defineExpose({
           type="number"
           required
           autocomplete="off"
-          aria-describedby="systolic-help"
         />
-        <p id="systolic-help" class="text-xs text-neutral-500 dark:text-neutral-400">
-          Systolic is the top number in your reading.
-        </p>
       </div>
       <div class="space-y-3">
         <BaseInput
@@ -82,11 +78,7 @@ defineExpose({
           type="number"
           required
           autocomplete="off"
-          aria-describedby="diastolic-help"
         />
-        <p id="diastolic-help" class="text-xs text-neutral-500 dark:text-neutral-400">
-          Diastolic is the bottom number in your reading.
-        </p>
       </div>
       <button
         type="submit"

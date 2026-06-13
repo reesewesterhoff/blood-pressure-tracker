@@ -19,7 +19,7 @@ const hasReadings = computed(() => props.readings.length > 0)
 <template>
   <div class="flex justify-center md:min-h-0">
     <div
-      class="w-full max-w-xl p-10 rounded-xl bg-white dark:bg-neutral-800 shadow-lg flex flex-col gap-6 md:h-full md:min-h-0"
+      class="w-full max-w-xl p-6 rounded-xl bg-white dark:bg-neutral-800 shadow-lg flex flex-col gap-6 md:h-full md:min-h-0"
     >
       <h2 class="text-2xl text-center text-neutral-900 dark:text-neutral-100">
         Blood Pressure History
