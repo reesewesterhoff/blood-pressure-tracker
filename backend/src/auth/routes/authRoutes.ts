@@ -56,7 +56,7 @@ authRoutes.post(
         email: email.toLowerCase(),
       });
       if (existingUser) {
-        return res.status(400).json({
+        return res.status(409).json({
           success: false,
           message: "User with this email already exists.",
         });
