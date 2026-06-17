@@ -71,6 +71,15 @@ jobs:
         working-directory: ${{ inputs.working_directory }}
         run: npm ci
 
+      - name: Cache mongodb-memory-server binary
+        if: inputs.service_name == 'backend'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: ${{ runner.os }}-mongodb-memory-server-${{ hashFiles(format('{0}/package-lock.json', inputs.working_directory)) }}
+          restore-keys: |
+            ${{ runner.os }}-mongodb-memory-server-
+
       - name: Run tests
         working-directory: ${{ inputs.working_directory }}
         run: ${{ inputs.test_command }}

@@ -21,8 +21,13 @@ async function verifyRedisConnection(): Promise<void> {
   }
 }
 
-// Run verification (non-blocking)
-verifyRedisConnection();
+// Run verification (non-blocking) on startup. Skip under tests: this is a
+// fire-and-forget network request, and in the test environment it would settle
+// (or retry) after Jest finishes, keeping the worker alive and triggering
+// "A worker process has failed to exit gracefully".
+if (process.env.NODE_ENV !== "test") {
+  verifyRedisConnection();
+}
 
 interface RateLimitOptions {
   windowMs: number; // Time window in milliseconds
