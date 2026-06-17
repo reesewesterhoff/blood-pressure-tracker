@@ -1,8 +1,7 @@
 // Tests for BloodPressureReading model
 
-import mongoose from "mongoose";
-import { BloodPressureReading } from "../../readings/models/BloodPressureReading";
-import { User } from "../../auth/models/User";
+import { BloodPressureReading } from "../../../readings/models/BloodPressureReading";
+import { User } from "../../../auth/models/User";
 
 describe("BloodPressureReading Model", () => {
   let testUser: any;
