@@ -51,8 +51,10 @@ export function errorHandler(
     error = new CustomError(message, 400);
   }
 
-  // Mongoose duplicate key
-  if (err instanceof mongoose.Error && "code" in err && err.code === 11000) {
+  // Duplicate key error. Note: this is raised by the MongoDB driver
+  // (MongoServerError / MongoBulkWriteError), not Mongoose, so it is not an
+  // instance of mongoose.Error. Guard on the error code directly.
+  if ((err as { code?: number }).code === 11000) {
     const message = "Duplicate field value entered";
     error = new CustomError(message, 400);
   }
