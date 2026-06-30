@@ -124,4 +124,9 @@ cd frontend && npm run test:e2e:dev
 
 ## Deployment
 
-Both services are containerized with Docker and deployed as images in Amazon ECR. On pushes to `main`, a GitHub Actions pipeline detects which service(s) changed, runs their tests, and builds/pushes only the changed image(s).
+The two services are deployed differently:
+
+- **Frontend** — built as static assets and hosted on **Amazon S3**, served via **CloudFront** (HTTPS, custom domain, SPA routing, and PWA caching). Deploys run `npm run build`, sync to S3 with per-file cache headers, and invalidate the CloudFront cache.
+- **Backend** — containerized with Docker and deployed as an image in **Amazon ECR** (running on AWS App Runner).
+
+On pushes to `main`, a GitHub Actions pipeline detects which service(s) changed, runs their tests, and deploys only the changed service(s) — the frontend via S3/CloudFront and the backend via ECR.
