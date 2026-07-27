@@ -68,6 +68,9 @@ const startServer = async () => {
       secret: process.env.SESSION_SECRET || "supersecretkeyfortestingonly",
       resave: false,
       saveUninitialized: false,
+      // Re-issue the session cookie on every response so the maxAge clock
+      // resets on each authenticated request (sliding/rolling session).
+      rolling: true,
       store: connectMongoSession.create({
         // Reuse the primary Mongoose connection pool for sessions.
         // @ts-expect-error connect-mongo's MongoClient type comes from a different
@@ -78,7 +81,7 @@ const startServer = async () => {
         secure: isProduction, // required for SameSite=None
         httpOnly: true,
         sameSite: isProduction ? "none" : "lax",
-        maxAge: 1000 * 60 * 60 * 24, // 24 hours
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours since last activity (rolling)
       },
     }),
   );
